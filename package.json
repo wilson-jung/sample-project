@@ -2,7 +2,8 @@
   "name": "sample-project",
   "private": true,
   "scripts": {
-    "plugin:build": "yarn workspace yarn-plugin-vcnc build && yarn plugin import ./plugin/bundles/@yarnpkg/plugin-vcnc.js"
+    "plugin:build": "yarn workspace yarn-plugin-vcnc build && yarn plugin import ./plugin/bundles/@yarnpkg/plugin-vcnc.js",
+    "build:shared": "yarn workspaces foreach -pt --include='@dragonball-shared/*' run build"
   },
   "workspaces": [
     "projects/*",

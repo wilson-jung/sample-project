@@ -10,7 +10,7 @@ export class InstallSharedCommand extends TadaCommands {
   static paths = [[`i`]]
 
   async execute() {
-    const projects = await this.getNamesByScope('tada-shared')
+    const projects = await this.getNamesByScope('dragonball-shared')
 
     if (!this.name) {
       return 1
@@ -22,7 +22,7 @@ export class InstallSharedCommand extends TadaCommands {
     }
 
     await execute(
-      `yarn workspace @tada-shared/${this.project} add -D ${this.name} && yarn workspace @tada-shared/${this.project} add -P ${this.name}`
+      `yarn workspace @dragonball-shared/${this.project} add -D ${this.name} && yarn workspace @dragonball-shared/${this.project} add -P ${this.name}`
     )
     return 0
   }
