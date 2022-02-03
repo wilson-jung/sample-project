@@ -1,0 +1,13 @@
+{
+  "main\/step1\/recommendQuestion": "타다를 주변 사람들에게 얼마나<divide>추천하고 싶으신가요?",
+  "main\/step1\/topDescription": "보내주시는 소중한 의견을 바탕으로<divide>더 나은 이동을 만들어 나가겠습니다.",
+  "main\/step1\/notRecommended": "비추천",
+  "main\/step1\/highlyRecommended": "매우 추천",
+  "main\/step2\/reasonForRating": "{{0}}점을 선택하신 이유는<divide>무엇인가요?",
+  "main\/step2\/reasonForRatingDescription": "만족/불만족 의견을 자유로이 기재해주세요.<divide>서비스에 적극 반영하겠습니다.",
+  "main\/step2\/submit": "의견 제출",
+  "main\/step2\/reason_placeholder": "자세한 의견을 들려주세요",
+  "main\/confirm\/title": "응답이 제출되었습니다",
+  "main\/confirm\/description": "소중한 의견을 들려주셔서 감사합니다.",
+  "appBar_skipButton": "건너 뛰기"
+}
