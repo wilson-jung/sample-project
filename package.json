@@ -2,8 +2,13 @@
   "name": "dragonball",
   "private": true,
   "scripts": {
+    "bootstrap": "yarn install && yarn proto:gen",
     "plugin:build": "yarn workspace yarn-plugin-vcnc build && yarn plugin import ./plugin/bundles/@yarnpkg/plugin-vcnc.js",
-    "build:shared": "yarn workspaces foreach -pt --include='@dragonball-shared/*' run build"
+    "build:shared": "yarn workspaces foreach -pt --include='@dragonball-shared/*' run build",
+    "proto:gen": "yarn workspace @dragonball-shared/proto proto:gen",
+    "proto:update": "yarn workspace @dragonball-shared/proto proto:update",
+    "type-check": "yarn workspaces foreach -pt --exclude=tada-web run type-check",
+    "lint": "yarn workspaces foreach -pt run lint"
   },
   "workspaces": [
     "projects/*",
