@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetTutorialContentProto";
+
+// 설명:
+// 가입 완료 후, 팝업을 보여줘야 하는지, 보여준다면 어떤 내용인지 내려줍니다.
+
+message UserGetTutorialContentParams {
+    // 현재 위치. GPS 권한이 없든지 해서 못 얻어오면 null
+    Location currentLocation = 1;
+}
+
+message UserGetTutorialContentResult {
+    message WelcomeCouponProvided {
+        StringValue messageTitle = 2;
+        StringValue messageBody = 3;
+        Image image = 4;
+
+        message Button {
+            string text = 1;
+            StringValue link = 2;
+        }
+
+        Button close_button = 5;
+        Button confirm_button = 6;
+        string log_key = 7;
+
+        // 이 필드가 있으면 클라이언트는 팝업 확인 버튼이 눌릴 때 Braze SDK로 커스텀 이벤트를 발생시킨다.
+        // https://www.braze.com/docs/developer_guide/platform_integration_guides/android/analytics/tracking_custom_events/
+        // https://www.braze.com/docs/developer_guide/platform_integration_guides/ios/analytics/tracking_custom_events/
+        repeated BrazeEvent brazeEventsOnConfirm = 16;
+    }
+
+    // 이 필드가 있으면 해당 내용으로 웰컴 쿠폰 제공 팝업을 띄웁니다.
+    // 2021-05-16 추가) 쿠폰과 관련되지 않더라도 웰컴 팝업이 필요한 경우 이 메시지가 내려갑니다.
+    WelcomeCouponProvided welcomeCouponProvided = 2;
+}

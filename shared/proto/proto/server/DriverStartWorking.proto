@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverStartWorkingProto";
+
+// 설명:
+// 드라이버가 출근 상태로 바꿀대 드라이버앱에서 호출한다.
+//
+// 에러코드:
+// BAD_REQUEST: 이 함수를 호출할 수 없는 상태인 경우 (이미 수신 중 등) & 변경된 요금 정산 방식을 적용 시점까지 동의하지 않은 경우
+// IDENTITY_CERTIFICATION_REQUIRED: 본인 인증이 필요한 경우
+// HAS_UPDATED_TERMS: 미수락한 약관이 있는 경우
+// HAS_UPDATED_FEE_TERMS: 미수락한 요금 위임 약관이 있는 경우
+// CONFIRM_REQUIRED: 피드백 관련 확인이 필요한 경우
+
+message DriverStartWorkingParams {
+    bool feedback_confirmed = 1;
+}
+
+message DriverStartWorkingResult {
+    DriverStatusDTO driverStatus = 1;
+}

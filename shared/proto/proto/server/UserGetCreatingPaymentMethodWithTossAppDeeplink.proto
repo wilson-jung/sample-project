@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetCreatingPaymentMethodWithTossAppDeeplinkProto";
+
+// 설명:
+// 사용자 계정에 토스 간편 결제를 등록할 때 라이더앱에서 호출한다.
+// 받은 deeplink로 토스 앱을 호출하거나 토스 앱이 없을 경우 url을 호출 한다.
+
+message UserGetCreatingPaymentMethodWithTossAppDeeplinkParams {
+    string callback_deeplink = 1;
+}
+
+message UserGetCreatingPaymentMethodWithTossAppDeeplinkResult {
+    string deeplink_android = 1;
+    string deeplink_ios = 2;
+    string url = 3;
+}

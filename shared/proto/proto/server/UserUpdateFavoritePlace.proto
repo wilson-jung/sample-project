@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserUpdateFavoritePlaceProto";
+
+// 설명 :
+// 유저가 즐겨찾기를 수정할 때 호출한다.
+//
+// 에러 :
+// 공통 에러
+
+message UserUpdateFavoritePlaceParams {
+    string favoritePlaceId = 1;
+    // type은 수정할 수 없다.
+
+    // name이 없으면 기존 name이 유지된다.
+    StringValue name = 2;
+    // location이 없으면 기존 location이 유지된다.
+    AddressedLocation location = 3;
+}
+
+message UserUpdateFavoritePlaceResult {
+    FavoritePlaceDTO favoritePlace = 1;
+}

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 핸들모아 앱에서 사고 접수 이후 드라이버가 운행 계속하기 버튼을 누를 때 호출된다.
+
+message DriverCompleteRideAccidentReportParams {
+    string ride_id = 1;
+}
+
+message DriverCompleteRideAccidentReportResult {
+    RideDTO ride = 1;
+}

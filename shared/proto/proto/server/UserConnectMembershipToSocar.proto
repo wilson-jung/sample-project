@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+import "membership.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserConnectMembershipToSocar";
+
+// 설명:
+// 구독한 멤버십을 쏘카에 연결한다.
+//
+// 에러코드:
+// - 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+
+message UserConnectMembershipToSocarParams {
+    string membership_id = 1;
+}
+
+message UserConnectMembershipToSocarResult {
+    message Popup {
+        string title = 1;
+        string body = 2;
+        StringValue socar_deeplink = 3; // null이 아닐 때만 쏘카로 이동 버튼을 보여준다.
+    }
+
+    UserMembershipDTO membership = 1;
+    bool is_success = 2;
+    Popup popup = 3;
+}

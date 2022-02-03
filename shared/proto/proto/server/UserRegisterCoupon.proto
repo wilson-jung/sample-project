@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "coupon.proto";
+import "wrappers.proto";
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserRegisterCouponProto";
+
+// 설명:
+// 사용자가 쿠폰을 등록할 때 라이더 앱에서 호출된다.
+//
+// 에러코드:
+// RIDE_COUPON_RIGISTER_FAILURE : 쿠폰 등록에 실패한 경우.
+// 자세한 실패 사유는 message에 있습니다.
+
+message UserRegisterCouponParams {
+    string code = 1;
+}
+
+// 응답:
+// CouponDTO가 내려간다.
+//
+// 기존에 친구 초대 쿠폰이 하나만 내려가던 때에는 coupon 필드만 사용하였으나
+// 친구 초대 쿠폰이 두 장 발급되는 것으로 기능이 바뀌었고, 하위호환성을 유지하기 위해서
+// coupon 필드는 남겨두었습니다.
+// 시간이 지나면 첫 번째 coupon을 삭제하고 세 번째 coupons 필드만 사용할 예정입니다.
+
+message UserRegisterCouponResult {
+    CouponDTO coupon = 1 [(client_deprecated_field)=true];
+    StringValue popup_body = 2;
+    repeated CouponDTO coupons = 3;
+}

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserLogAppSatisfactionProto";
+
+// 설명:
+// 서비스가 만족 스러운지 질문에 대한 응답 값
+
+message UserLogAppSatisfactionParams {
+    bool isUserSatisfied = 1;
+}
+
+message UserLogAppSatisfactionResult {
+}

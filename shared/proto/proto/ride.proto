@@ -1,0 +1,861 @@
+syntax = "proto3";
+
+import "common.proto";
+import "timestamp.proto";
+import "wrappers.proto";
+import "coupon.proto";
+
+package taxi;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol";
+option java_outer_classname = "RideProto";
+
+message RideTypeDescription {
+    // 라이드 타입. RideType, RideTypeGroup의 값이 올 수 있다.
+    //
+    // 2021.11.4.
+    // 원래 프리미엄/플러스 라이드 모두 PREMIUM으로 내려줘야 하는데, 플러스는 PLUS로 잘못 내려주고 있었다.
+    // 지금 와서 PLUS -> PREMIUM으로 바꾸면 무슨 문제가 날지 모르므로,
+    // client deprecation 시켜서 앞으로 사용하지 못하도록만 막는다.
+    string value = 1 [(client_deprecated_field) = true];
+
+    // 화면에 보여줄 사람이 알아볼 수 있는 값들
+    string name = 2;
+}
+
+message RideCancellationCause {
+    enum Value {
+        UNSPECIFIED = 0;
+        DISPATCH_TIMEOUT = 1;
+        DRIVER_CANCELLED = 2;
+        RIDER_CANCELLED = 3;
+        ADMIN_CANCELLED = 4;
+    }
+    Value value = 1;
+}
+
+message RideCancellationReasonType {
+    message Driver {
+        enum Value {
+            CUSTOM = 0;
+            // 손님이 나타나지 않음
+            USER_NOT_SHOWN = 1;
+            // 손님 수나 짐이 너무 많음
+            NOT_ENOUGH_SPACE = 2;
+            // 사고 발생
+            ACCIDENT = 3;
+            // 개인 사정
+            PERSONAL_REASON = 4;
+            // 손님을 잘못 태움
+            WRONG_RIDER = 5;
+            // 고객 대기시간이 길어짐
+            TOO_LONG_TO_BE_PICKED_UP = 6;
+            // 손님이 배차 취소를 요청함
+            USER_REQUESTED = 7;
+            // 손님이 마스크를 착용하지 않음
+            NO_MASK = 8;
+            // (대리) 운행할 수 없는 차량임
+            DRIVING_UNAVAILABLE_VEHICLE = 100;
+            // (대리) 타사 호출 수행
+            OVERRIDDEN_BY_OTHER_APP = 101;
+            // (대리) 거리가 먼 출발지
+            TOO_FAR_ORIGIN = 102;
+        }
+    }
+
+    message User {
+        enum Value {
+            CUSTOM = 0;
+            // 다른 교통수단을 이용
+            OTHER_TRANSPORTATION = 1;
+            // 너무 긴 탑승 대기 시간
+            TOO_LONG_WAITING = 2;
+            // 너무 짧은 탑승 대기 시간
+            TOO_SHORT_WAITING = 3;
+            // 탑승 장소 설정 오류
+            INVALID_ORIGIN = 4;
+            // 탐승 장소에 차량이 오지 않음
+            DRIVER_NOT_SHOWN = 5;
+            // 드라이버가 취소를 요구했을 경우
+            DRIVER_REQUESTED = 6;
+            // 예상 도착시간이 너무 늦음
+            TOO_LATE_ETA = 7;
+            // 출발시간 변경 희망
+            WANT_TO_CHANGE_DEPARTURE_TIME = 8;
+            // 주소지 설정 오류/실수
+            ADDRESS_SETUP_ERROR = 9;
+        }
+    }
+
+    oneof type {
+        Driver.Value driver = 2;
+        User.Value user = 3;
+    };
+}
+
+message RideCancellationFeeType {
+    enum Value {
+        // 배차 후 취소 수수료
+        CANCELLATION_FEE = 0;
+        // 도착 후 미탑승 수수료
+        NO_SHOW_CANCELLATION_FEE = 1;
+        // 취소 수수료가 없다
+        NO_CANCELLATION_FEE = 2;
+    }
+    Value value = 1;
+}
+
+message RideCancellationFeePolicy {
+    RideCancellationFeeType cancellation_fee_type = 1;
+    // 수수료가 언제부터 적용되는지 (예, 300초 = 5분)
+    int32 cancellation_penalty_duration_seconds = 2;
+    // 수수료
+    int32 cancellation_fee_krw = 3;
+    // Ride 상세 화면에서 보여지는 취소 수수료에 대한 설명
+    StringValue cancellation_fee_description = 4;
+    // 취소 수수료 조건
+    StringValue cancellation_fee_condition = 5 [(client_deprecated_field) = true];
+}
+
+message RideCouponDTO {
+    enum BenefitType {
+        DISCOUNT_AMOUNT = 0;
+        DISCOUNT_RATE = 1;
+    }
+    // 쿠폰 id
+    string id = 1;
+    // 쿠폰 이름
+    string name = 2;
+    // 할인되는 종류(DISCOUNT_RATE, DISCOUNT_AMOUNT)
+    BenefitType benefitType = 3;
+    // 할인 정보(양수로 내려갑니다. 클라에서 필요할 때 - 붙여주시면 됩니다.)
+    // DISCOUNT_RATE일때는 퍼센트(ex. 70%인 경우 70)가 내려갑니다.
+    // DISCOUNT_AMOUNT일 때에는 할인되는 금액이 내려갑니다.
+    int32 benefitAmount = 4;
+    // 유효 기간
+    Timestamp validAfter = 5;
+    Timestamp expiresAt = 6;
+    // 쿠폰 코드(혹은 입력한 값)
+    string couponCode = 7;
+    // 쿠폰의 활성 상태. 주의: 이 값은 쿠폰 리스트에서만 의미가 있습니다.
+    bool isActive = 8;
+    // 쿠폰의 사용 조건
+    // ex) "5000원 이상 결제 시"
+    StringValue conditionText = 9;
+}
+
+// 출발지 혹은 도착지까지 차량이 언제 도착할지에 대한 ETA 객체.
+// timestamp필드의 경우, 예상 도착 시간의 절대 시각의 Epoch Millis값이다.
+// 클라이언트는 로컬 시각과 비교하여 도착 예상 시각을 보여줘야한다.
+// 만약 로컬 시각보다 예상시간이 이른 경우는 적당히 표시해주는 로직이 필요하다.
+message RideEta {
+    int64 timestamp = 1;
+}
+
+// 라이드 origin, destination 사이의 운행에 대한 예측치
+// RequestRide에 같이 올려준 EstimationToken의 값을 그대로 내려준다.
+message RideEstimation {
+    int32 min_cost = 1; // won
+    int32 max_cost = 2; // won
+    Int32Value original_min_cost = 5; // won
+    Int32Value original_max_cost = 6; // won
+    Int32Value original_estimated_cost = 8; // 할인 적용 전 단일가 예상요금
+    Int32Value estimated_cost = 9; // 단일가 예상요금
+    int32 distance_meters = 3 [(client_deprecated_field) = true]; // meter
+    int32 duration_seconds = 4 [(client_deprecated_field) = true]; // second
+    // 서지 조건에 부합하는 경우 해당하는 퍼센티지가 내려감
+    // 클라에서는 추후에 서지 정도를 표현할 일이 있지 않는 이상 무시하시면 됩니다.
+    Int32Value surge_percentage = 7;
+    // 할인 전 호출료 (할인이 적용된 경우만 내려간다)
+    Int32Value original_call_fee = 56;
+    // 호출료
+    Int32Value call_fee = 57;
+}
+
+// 매칭 후 탑승 시 주의사항에 대한 정보를 담고 있는 객체.
+message RidePickupCaution {
+    Image image = 1;
+    string title = 2;
+    string body = 3;
+}
+
+// 주행에 대한 정보를 담고 있는 객체.
+// 예측값으로 내려가거나, 라이드가 완료된 후 주행 정보로 내려갈 수 있다. (RideDTO의 route_estimation, route 참고)
+message RideRoute {
+    int32 durationSeconds = 1;
+    int32 distanceMeters = 2;
+}
+
+message RidePaymentMethodDTO {
+    string id = 1;
+    PaymentMethodDTO.Type type = 2;
+    int64 createdAt = 3;
+    oneof method {
+        PaymentMethodDTO.Card card = 4;
+        PaymentMethodDTO.BizCard biz_card = 5;
+        PaymentMethodDTO.BizCredit biz_credit = 6;
+        PaymentMethodDTO.TossAppPay toss_app_pay = 7;
+    }
+}
+
+message RidePaymentProfileDTO {
+    string id = 1;
+    string name = 2;
+    string email = 3;
+    PaymentProfileDTO.Type type = 4;
+}
+
+// 라이드의 리뷰를 담고 있는 객체.
+message RideReviewByUserDTO {
+    string id = 1;
+    int32 rating = 2;
+    // optional
+    StringValue reason = 3;
+    int64 createdAt = 4;
+}
+
+message RideReceipt {
+    message LineItem {
+        // 이 ENUM 값은 언제든지 추가 될 수 있으므로,
+        // 따라서 모르는 ENUM값이 왔을때에 대한 처리를 잘 해줘야한다.
+        // 모르는 값은 그냥 맨 뒤에 넣어주면 된다.
+        enum Category {
+            UNSPECIFIED = 0;
+            // 운전비용
+            DRIVING = 1 [deprecated = true];
+            // 자동차 대여 비용
+            RENT = 2 [deprecated = true];
+            // 통행료
+            TOLLS = 3;
+            // 할인 금액 (양수 값이 들어온다! 클라에서 마이너스 붙여서 보여줍니다)
+            DISCOUNT = 4;
+            // 손망실비 (토하거나 차량 파손인 경우 청구되는 항목)
+            CLEANING = 5;
+            // 취소수수료
+            CANCELLATION = 6;
+            // 호출료
+            CALL = 7;
+            // 크레딧 사용량 (양수 값이 들어온다! 클라에서 마이너스 붙여서 보여줍니다)
+            // 단위는 원 대신에 크레딧을 붙여야 합니다
+            CREDIT = 8;
+            // 예약비
+            RESERVATION = 9;
+            // 거리 추가 요금
+            ADDITIONAL_DISTANCE_FEE = 10;
+        }
+        // 타입. 이 필드를 보고 들여쓰기를 할지 결정한다.
+        // 모르는 타입이 들어오는경우 그냥 뒤에 넣어주면 된다.
+        Category category = 1;
+        // 화면에 표시되어야 하는 이름
+        string name = 2;
+        // 금액. 할인이라도 항상 양수가 들어온다.
+        int32 amountKRW = 3;
+    }
+
+    int32 totalPriceKRW = 1;
+    repeated LineItem lineItem = 2;
+
+    // 환불된 경우 환불 금액 (양수로 들어옵니다)
+    Int32Value refundAmountKRW = 3;
+}
+
+// 길안내에 사용해야하는 옵션과 정보들
+message NavigationOptions {
+    // 방향성 옵션 고려 유무
+    bool should_consider_direction = 1;
+    // 안내 입구 위치
+    AddressedLocation entrance_location = 2;
+}
+
+// 라이더가 적용받는 바로대리 정보
+message RiderBaroDaeriInfo {
+    message Guarantee {
+        // 최초 호출 시각으로부터 드라이버 출발지 도착까지 걸리는 시각을 보장할 때 값
+        int64 driver_to_arrive_duration_seconds = 1;
+        // duration_seconds가 지났을 때 보여주는 보상 관련 설명
+        // 예) "30% 쿠폰 발급 예정", "100% 쿠폰 발급 예정" 등
+        StringValue compensation_description = 2;
+    }
+
+    message Popup {
+        Image image = 1;
+        string title = 2;
+        string body = 3;
+    }
+
+    enum ConfirmedType {
+        // 이전 라이드에서 바로대리 보상을 받은 경우
+        COMPENSATED_BY_OTHER_RIDE = 0;
+        // 현 라이드에서 바로대리 보상을 받은 경우
+        COMPENSATED_BY_CURRENT_RIDE =1;
+    }
+
+    // 드라이버의 출발지 도착 시각을 보장할 때 기준이 되는 시각 (최초 호출 시각)
+    Timestamp start_at = 1;
+    repeated Guarantee guarantees = 2;
+    // 클라에서 start_at과 guarantees를 조합하여 보여줄 문구를 판단하는 것이 아니라 문구가 이미 정해진 경우 타입과 설명을 내려준다.
+    ConfirmedType confirmed_type = 3;
+    // 예) "보상쿠폰 지급 완료" 등
+    StringValue confirmed_description = 4;
+    // 바로대리 안내 팝업
+    Popup popup = 5;
+}
+
+message RideDTO {
+    enum Status {
+        UNSPECIFIED = 0;
+        PENDING = 1;
+        ACCEPTED = 2;
+        ARRIVED = 3;
+        PICKED_UP = 4;
+        DROPPED_OFF = 5;
+        CANCELED = 6;
+    }
+
+    enum UserRequestTag {
+        // 기타 (직접입력)
+        CUSTOM = 0;
+        // 부드럽게 운행해주세요
+        NO_WILD_DRIVING = 1;
+        // 담배 냄새는 거북합니다
+        NO_UNCLEAN = 2;
+        // 네비게이션 경로대로 가주세요
+        NO_BYPASSING_ROUTE = 3;
+        // 불필요한 대화는 사양합니다
+        NO_TOO_MUCH_TALKER = 4;
+        // 반말과 과격한 언행은 싫어요
+        NO_UNKIND = 5;
+    }
+
+    enum UserRidePreferenceTag {
+        UNKNOWN = 0;
+        // 천천히 안전하게 이동해주세요
+        SAFE_RIDE = 1;
+        // 조금 서둘러 이동해주세요
+        HURRY_RIDE = 2;
+
+        // 네비게이션 안내대로 이동해주세요
+        NAVIGATION_PATH = 3;
+        // 드라이버님이 아시는 길로 이동해도 좋아요
+        FREE_PATH = 4;
+    }
+
+    message UserRidePreference {
+        string display_name = 1;
+        UserRidePreferenceTag ride_preference_tag = 2;
+    }
+
+    message Stopover {
+        string address = 1;
+        int64 stopped_over_at = 2;
+        int64 created_at = 3;
+    }
+
+    message PassportMembershipBenefit {
+        // 이용 예정, 이용 완료 상세 화면, 평가 화면 영수증에 보여줄 문구
+        // 이용 완료, 평가 화면 -> ex) "플러스 탑승 (5% 적립)"
+        // 이용 예정          -> ex) "플러스 탑승 (5% 적립 예정) (호출 예약)
+        StringValue deposit_description = 1;
+        // 이용 완료 상세 화면에 보여줄 실제 크레딧 적립량 (적립이 없을 때는 0)
+        // "+ 100 크레딧"으로 표시해줘야 합니다.
+        int32 credit_deposit_amount = 2;
+        // 이용 예정 상세, 평가 화면 영수증에 보여줄 예상 크레딧 적립량 (아직 확정나지 않았을 때는 0)
+        // "+ 100 크레딧"으로 표시해줘야 합니다.
+        int32 expected_credit_deposit_amount = 3;
+        // 예상 혜택 문구
+        // 평가 화면 이전 Ride -> ex) "5% 적립", "크레딧 적립 예정" (가까운 타다)
+        // 평가 화면 이후 Ride -> ex) "500 크레딧 적립"
+        string expected_benefit_text = 4;
+    }
+
+    message PassportMembershipBottomSheetNudge {
+        message ConfirmButton {
+            string text = 1;
+            StringValue link = 2;
+        }
+
+        // ex) 바로 적용 가능한 [b]7만원 혜택[/b] 받기
+        string title = 1;
+        // ex) 패스포트 가입하고
+        StringValue subtitle = 2;
+
+        string close_button_text = 3;
+        ConfirmButton confirm_button = 4;
+
+        Image image = 5;
+        string log_key = 6;
+    }
+
+    message PassportMembershipFoldingNudge {
+        // ex) 패스포트로 [b]바로 할인받기[/b]
+        string description = 1;
+        string link = 2;
+        string log_key = 3;
+    }
+
+    message PreviousRideInfo {
+        AddressedLocation drop_off = 1;
+    }
+
+    string id = 1;
+
+    // 라이드 타입.
+    // 보통 RideType의 값이 들어가는데, Status가 PENDING, CANCELLED일 때는 RideTypeGroup의 값이 들어올 수도 있다.
+    string type = 2;
+
+    RideTypeDescription typeDescription = 3;
+
+    // 현재 Ride의 상태에 따라 설정된다.
+    Status status = 4;
+
+    // version이 클수록 이 Ride에 대한 최신 정보를 담고 있다.
+    int64 version = 5;
+
+    // sequenceNumber가 클수록 더 나중에 생긴 Ride이다.
+    int64 sequenceNumber = 6;
+
+    // 가까운타다(RideTypeGroup) 호출 시 후보로 선택되는 라이드 타입 정보. 현재는 정확한 타입이 정해지지 않은(드라이버가 배정되지 않은) PENDING 상태인 경우에만 값이 채워진다.
+    repeated RideTypeDescription candidate_type_descriptions = 7;
+
+    // 라이더가 요청한 출발 지점
+    AddressedLocation origin = 10;
+
+    // 실제 라이더가 픽업된 지점. PICKED_UP 상태 이후부터 설정된다.
+    AddressedLocation pickup = 11;
+
+    // 라이더가 요청한 도착 지점.
+    AddressedLocation destination = 12;
+
+    // 실제 라이더가 내린 지점. DROPPED_OFF 상태 이후에 설정된다.
+    AddressedLocation dropoff = 13;
+
+    // 취소에 대한 정보를 담고 있으며, Ride가 취소된 경우에 설졍된다.
+    RideCancellationCause cancellationCause = 14;
+
+    // 자동차의 현재 위치 정보를 보여준다.
+    // ACCPETED, ARRIVED, PICKED_UP 상태일때만 내려온다.
+    VehicleLocation location = 15;
+
+    // 취소에 대한 이유를 담고 있으며, Ride가 취소된 경우에 설졍된다.
+    StringValue cancellationReason = 16;
+
+    // 취소 수수료의 종류 (배차 후 취소 수수료, 도착 후 미탑승 수수료)
+    RideCancellationFeeType cancellation_fee_type = 17;
+
+    // 취소 수수료 정책
+    repeated RideCancellationFeePolicy cancellation_fee_policies = 18;
+
+    // Ride 펼침 화면에서 보여지는 취소 수수료 문구
+    StringValue cancellation_fee_warning = 26;
+
+    // 취소시에 내려주는 이유 타입
+    RideCancellationReasonType cancellationReasonType = 25;
+
+    // Ride를 호출한 유저에 대한 정보
+    UserDTO rider = 20;
+
+    // Ride에 배차된 드라이버의 정보. Ride가 드라이버에 의해 Accept 된 경우에만 설정된다.
+    // 즉, CANCELLED 상태일때도 Ride가 Accept된 적이 없다면 설정되어 있지 않을 수 있다.
+    DriverDTO driver = 21;
+
+    // 이 Ride에 드라이버와 함께 할당된 차량 정보.
+    // 즉, driver 필드가 설정되어 있는 경우에만 이 필드가 설정된다.
+    VehicleDTO vehicle = 22;
+
+    // 라이더의 휴대폰 전화번호.
+    // 라이더의 개인정보 보호를 위해 드라이버 앱에서 라이더와의 통화기록을 삭제할 때 사용된다.
+    StringValue riderRealPhoneNumber = 23;
+
+    // 어시스트에서 라이더의 속성.
+    // DISABLED_PERSON(장애인) 혹은 SENIOR(65세 이상) 두 가지가 모두 내려갈 수 있다.
+    repeated AssistRegistrationType riderAssistRegistrationTypes = 24 [(client_deprecated_field) = true];
+
+    // 대리에 사용될 유저의 차량 정보
+    UserVehicleDTO user_vehicle = 27;
+
+    // 경유지 정보
+    repeated AddressedLocation waypoints = 28;
+
+    // 추가 경유지 개수
+    Int32Value additional_waypoint_count = 29;
+
+    // 차량이 출발지까지 이동하는데 얼마나 걸릴지에 대한 정보.
+    // ACCEPTED 상태인 경우에만 이 필드가 설정된다.
+    RideEta originEta = 30;
+
+    // 차량이 도착지까지 이동하는데 얼마나 걸릴지에 대한 정보.
+    // PICKED_UP 상태인 경우에만 이 필드가 설정된다.
+    RideEta destinationEta = 31;
+
+    // 드라이버가 배차를 수락한 시각.
+    // ACCEPTED 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp acceptedAt = 40;
+
+    // 드라이버가 픽업 장소에 도착한 시각.
+    // ARRIVED 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp arrivedAt = 41;
+
+    // 라이더가 픽업된 시각.
+    // PICKED_UP 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp pickedUpAt = 42;
+
+    // 라이더가 내린 시각.
+    // DROPPED_OFF 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp droppedOffAt = 43;
+
+    // 라이드가 취소된 시각.
+    Timestamp cancelledAt = 44;
+
+    // 목적지 부근을 최초로 접근한 시각.
+    Timestamp approachingDestinationSince = 45;
+
+    // 목적지 부근을 떠난 시각.
+    Timestamp leavingDestinationSince = 64;
+
+    // 출발지 부근을 최초로 접근한 시각.
+    Timestamp approachingOriginSince = 65;
+
+    // 출발지 부근을 떠난 시각.
+    Timestamp leavingOriginSince = 46;
+
+    // RequestRide에 같이 올려준 EstimationToken의 값을 그대로 설정된다.
+    RideEstimation estimation = 50;
+
+    // RideRoute에 대한 예측값.
+    // 가까운 타다 출시 이후 버전(3.2.0 이상)에서는 RideRoute 예측값이 필요할 때 route_estimation을 사용한다.
+    // 가까운 타다 출시 이전 버전(3.2.0 미만)에서는 RideRoute 예측값이 필요할 때 estimation을 사용한다.
+    RideRoute route_estimation = 67;
+
+    // 차량이 승객을 태우고 이동한 경로에 대한 정보.
+    // DROPPED_OFF 상태인 경우에만 이 필드가 채워진다.
+    RideRoute route = 51;
+
+    // 사용자가 라이드를 결제할/결제한 결제 수단에 대한 정보 (미수금 처리시 초기 선택과 달라질 수 있음)
+    RidePaymentMethodDTO paymentMethod = 52;
+
+    // 라이더에게 청구된 요금에 대한 영수증 정보.
+    // DROPPED_OFF 혹은 CANCELED(취소수수료)일 때 설정될 수 있다.
+    RideReceipt receipt = 53;
+
+    // 라이드에 사용되는 쿠폰에 대한 정보
+    CouponDTO coupon = 54;
+
+    // 크레딧 사용이 적용된 경우 true, 나머지 경우 false로 내려간다.
+    BoolValue uses_credit = 19;
+
+    // 추가과금 금액을 포함한 가격 (receipt에는 추가과금 금액이 포함되지 않는다.)
+    // 탑승내역 리스트에서는 이 값을 보여줘야 합니다.
+    Int32Value totalPriceKRW = 55;
+
+    // 드라이버 수입액
+    // 드라이버 앱에서, 프리미엄 드라이버일 때만 내려갑니다.
+    Int32Value driverProfitKRW = 56;
+
+    // 서지 정보.
+    StringValue surgeMultiplier = 57;
+
+    // 결제 프로필 정보
+    RidePaymentProfileDTO paymentProfile = 58;
+
+    // (비즈니스 프로필) 호출 목적
+    StringValue bizReason = 59;
+
+    // 이 값이 true인 경우 탑뷰가 아닌 차량 아이콘을 그린다.
+    // 이 값이 내려오지 않는 경우 false로 취급한다.
+    BoolValue disableVehicleBearing = 62;
+
+    // 라이드 요청 후 매칭됐을 때 주의사항에 관한 내용
+    // 이 값이 내려가는 경우 클라에서는 한 번만 보여준다.
+    RidePickupCaution pickupCaution = 63;
+
+    // 출발지 길안내에 사용해야하는 옵션
+    NavigationOptions origin_navigation_options = 66;
+
+    // 대리 여부.
+    BoolValue is_daeri = 68;
+
+    RiderBaroDaeriInfo rider_baro_daeri_info = 77 [deprecated = true];
+
+    // 라이드 시 유저 요청사항. 이 필드가 바어있지 않으면 하차 후 평가 시 여기 있는 태그와 관련된 리뷰 태그로만 리뷰를 받아야 한다.
+    repeated UserRequestTag user_request_tags = 69;
+
+    // 평가 화면이 만료되는 시점. 필드가 채워진 경우 이 시점 이후로는 평가 화면을 띄우지 않아도 된다.(현재는 대리만 내려간다.)
+    Timestamp rider_review_expires_at = 70;
+
+    // 대리 드라이버가 아직 운행 계속 여부를 결정하지 않은 사고 접수 내역이 있으면 내려준다.
+    // 클라이언트에서는 이 값이 있으면 운행 계속 여부를 선택하는 화면을 띄워줘야 한다.
+    AccidentReportDTO uncompleted_accident_report = 71 [deprecated = true];
+
+    // 적용된 보험 관련 설명. 있는 경우에만 내려가는데, 대리에만 존재합니다.
+    StringValue insurance_description = 72 [deprecated = true];
+
+    repeated Stopover stopovers = 73;
+
+    BoolValue is_using_mechanical_meter = 74;
+
+    // 드라이버 Ban expiration. 라이더 앱에서는 이 필드를 보고 버튼 명을 결정한다. 비어있을 경우는 30일, 음수일 경우는 영원히로 간주한다.
+    Int32Value rider_driver_ban_expiration_days = 75;
+
+    // #cell_대리이동수단_eta 에서 추가한, 대리드라이버가 origin 까지 이동할 거라고 설정해 둔 수단.
+    // https://docs.google.com/presentation/d/1z8TsiuatYStcLUf5iXq2pJgBInnku7Gz5yKeQm3swRM/edit#slide=id.ga9b354c0fd_0_71
+    DaeriTransportationMedium daeri_to_origin_transportation_medium = 76 [deprecated = true];
+
+    BoolValue should_get_price_adjusted_ride_suggestion = 78;
+
+    // 패스포트 혜택 관련 필드
+    PassportMembershipBenefit passport_membership_benefit = 79;
+
+    // 패스포트 바텀 시트 넛지
+    PassportMembershipBottomSheetNudge passport_membership_bottom_sheet_nudge = 80;
+    
+    // 패스포트 접기형 넛지
+    PassportMembershipFoldingNudge passport_membership_folding_nudge = 81;
+
+    // 포워드 디스패치일 경우, 이전 라이드의 도착지 등의 정보
+    PreviousRideInfo previous_ride_info = 82;
+
+    // 유저에게 배차된 이후, 드라이버에게 전화하는 것이 불가능할 때 내려주는 팝업
+    // 유저가 드라이버에게 전화하는 것이 가능하다면 아무것도 내려가지 않습니다.
+    PopUp call_button_disable_popup = 83;
+
+    Int32Value call_fee = 84;
+
+    // 라이더 앱 리뷰 화면에서 보여주는 대리 라이더 리뷰 이벤트 진행 현황 이미지를 위한 임시 필드.
+    Image daeri_rider_review_event_2020_image = 9000 [deprecated = true];
+
+    bool is_reserved_ride = 85;
+
+    // 호출예약일 때만 내려간다.
+    // 호출예약일 때는 arrived_at 대신 이 값을 기준으로 미탑승 수수료 카운트를 해야 한다.
+    Timestamp expected_pick_up_at = 86;
+
+    bool is_driver_no_show = 87;
+
+    // 호출예약일 때만 내려준다.
+    Timestamp reservation_accepted_at = 88;
+
+    // 라이드 취소 팝업
+    PopUp cancellation_completed_popup = 89;
+
+    // 유저의 라이드에 대한 사전 요청들
+    repeated UserRidePreference user_ride_preferences = 90;
+
+    // X-mas 2018 이벤트 관련 필드들.
+    reserved "xmas2018Event";
+    reserved 60;
+    reserved "xmasEvent2018";
+    reserved 61;
+}
+
+// RideDTO를 라이더에게 리스트로 내려줄 때 사용되는 RideDTO의 경량화 버전.
+message UserCompactRideDTO {
+    enum RideProductType {
+        UNKNOWN = 0;
+        REAL_TIME_RIDE = 1;
+        RESERVED_RIDE = 2;
+        RIDE_RESERVATION = 3;
+    }
+
+    string id = 1;
+
+    // 라이드 타입.
+    // 보통 RideType의 값이 들어가는데, Status가 PENDING, CANCELLED일 때는 RideTypeGroup의 값이 들어올 수도 있다.
+    string type = 2;
+
+    RideTypeDescription typeDescription = 3;
+
+    // 현재 Ride의 상태에 따라 설정된다.
+    RideDTO.Status status = 4;
+
+    // 라이더가 요청한 출발 지점
+    AddressedLocation origin = 10;
+
+    // 실제 라이더가 픽업된 지점. PICKED_UP 상태 이후부터 설정된다.
+    AddressedLocation pickup = 11;
+
+    // 라이더가 요청한 도착 지점.
+    AddressedLocation destination = 12;
+
+    // 실제 라이더가 내린 지점. DROPPED_OFF 상태 이후에 설정된다.
+    AddressedLocation dropoff = 13;
+
+    // 취소에 대한 정보를 담고 있으며, Ride가 취소된 경우에 설졍된다.
+    RideCancellationCause cancellationCause = 14;
+
+    // 취소시에 내려주는 이유 타입
+    RideCancellationReasonType cancellationReasonType = 15;
+
+    // 취소 수수료의 종류 (배차 후 취소 수수료, 도착 후 미탑승 수수료)
+    RideCancellationFeeType cancellation_fee_type = 16;
+
+    // 취소 수수료 정책
+    repeated RideCancellationFeePolicy cancellation_fee_policies = 17;
+
+    // 새로운 취소 수수료 정책이 시작되었는가에 대한 정보
+    // 20191118 0시 전까지 false이며, 이후 null이 됨
+    BoolValue should_apply_changed_cancellation_fee_policies = 18;
+
+    // 드라이버가 배차를 수락한 시각.
+    // ACCEPTED 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp acceptedAt = 20;
+
+    // 드라이버가 픽업 장소에 도착한 시각.
+    // ARRIVED 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp arrivedAt = 21;
+
+    // 라이더가 픽업된 시각.
+    // PICKED_UP 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp pickedUpAt = 22;
+
+    // 라이더가 내린 시각.
+    // DROPPED_OFF 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp droppedOffAt = 23;
+
+    // 라이드가 취소된 시각.
+    // DROPPED_OFF 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp cancelledAt = 24;
+
+    // 경유지 정보
+    repeated AddressedLocation waypoints = 28;
+
+    // 추가 경유지 개수
+    Int32Value additional_waypoint_count = 29;
+
+    // 라이드에 사용되는 쿠폰에 대한 정보
+    CouponDTO coupon = 30 [(client_deprecated_field)=true];
+
+    // 추가과금 금액을 포함한 가격 (receipt에는 추가과금 금액이 포함되지 않는다.)
+    // 탑승내역 리스트에서는 이 값을 보여줘야 합니다.
+    Int32Value totalPriceKRW = 31;
+
+    // 요금 상세내역이 있는지 여부
+    // status와 조합하여 취소수수료가 발생했는지 확인하는데에 사용
+    bool hasReceipt = 32;
+
+    // 비즈니스 프로필 이름
+    StringValue bizProfileName = 33;
+
+    // 대리 여부.
+    BoolValue is_daeri = 68;
+
+    // 할인 적용 여부
+    bool is_discount_applied = 34;
+
+    // 실제 제공받은 패스포트 멤버십 혜택 관련 문구
+    // ex) "500 크레딧 적립"
+    StringValue provided_passport_membership_benefit_description = 35;
+
+    Timestamp created_at = 37;
+
+    RideProductType ride_product_type = 38;
+
+    bool is_driver_no_show = 39;
+
+    // 호출예약일 때만 내려준다.
+    Timestamp reservation_accepted_at = 40;
+
+    // 호출예약의 탑승 예정 시각 (예약시각)
+    Timestamp expected_pick_up_at = 41;
+}
+
+// RideDTO를 드라이버에게 리스트로 내려줄 때 사용되는 RideDTO의 경량화 버전.
+message DriverCompactRideDTO {
+    string id = 1;
+
+    // 라이드 타입.
+    // 보통 RideType의 값이 들어가는데, Status가 PENDING, CANCELLED일 때는 RideTypeGroup의 값이 들어올 수도 있다.
+    string type = 2;
+
+    RideTypeDescription typeDescription = 3;
+
+    // 현재 Ride의 상태에 따라 설정된다.
+    RideDTO.Status status = 4;
+
+    // 라이더가 요청한 출발 지점
+    AddressedLocation origin = 10;
+
+    // 실제 라이더가 픽업된 지점. PICKED_UP 상태 이후부터 설정된다.
+    AddressedLocation pickup = 11;
+
+    // 라이더가 요청한 도착 지점.
+    AddressedLocation destination = 12;
+
+    // 실제 라이더가 내린 지점. DROPPED_OFF 상태 이후에 설정된다.
+    AddressedLocation dropoff = 13;
+
+    // 취소에 대한 정보를 담고 있으며, Ride가 취소된 경우에 설졍된다.
+    RideCancellationCause cancellationCause = 14;
+
+    // 취소에 대한 이유를 담고 있으며, Ride가 취소된 경우에 설졍된다.
+    StringValue cancellationReason = 15;
+
+    // 취소시에 내려주는 이유 타입
+    RideCancellationReasonType cancellationReasonType = 16;
+
+    // 취소수수료가 부과됐는지 여부를 담고 있으며, Ride가 취소된 경우에 설정된다.
+    BoolValue hasCancellationFee = 17;
+
+    // Ride를 호출한 유저에 대한 정보
+    UserDTO rider = 20;
+
+    // 경유지 정보
+    repeated AddressedLocation waypoints = 28;
+
+    // 추가 경유지 개수
+    Int32Value additional_waypoint_count = 29;
+
+    // 드라이버가 배차를 수락한 시각.
+    // ACCEPTED 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp acceptedAt = 30;
+
+    // 드라이버가 픽업 장소에 도착한 시각.
+    // ARRIVED 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp arrivedAt = 31;
+
+    // 라이더가 픽업된 시각.
+    // PICKED_UP 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp pickedUpAt = 32;
+
+    // 라이더가 내린 시각.
+    // DROPPED_OFF 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp droppedOffAt = 33;
+
+    // 라이드가 취소된 시각.
+    // DROPPED_OFF 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp cancelledAt = 34;
+
+    // 차량이 승객을 태우고 이동한 경로에 대한 정보.
+    // DROPPED_OFF 상태인 경우에만 이 필드가 채워진다.
+    RideRoute route = 40;
+
+    // 해당 라이드의 매출. 프리미엄 운행 드라이버에게만 내려갑니다.
+    // 운행이력 리스트에서는 이 값을 보여줘야 합니다.
+    Int32Value driverProfitKRW = 50;
+
+    // 서지 정보.
+    StringValue surgeMultiplier = 51;
+
+    // 보험사 이름. 있는 경우에만 내려가는데, 대리에만 존재합니다. (핸들모아)
+    StringValue insurance_company_name = 52 [deprecated = true];
+
+    // 사고 발생 여부. 발생한 경우에만 true로 내려갑니다. null이나 false이면 무사고. (핸들모아)
+    BoolValue is_accident_reported = 53 [deprecated = true];
+
+    // 사고 접수 번호. 보험사에 접수된 접수 번호가 있는 경우 내려갑니다. (핸들모아)
+    repeated string insurance_report_id = 54 [deprecated = true];
+
+    // 사고 접수 버튼 표시 여부 (핸들모아)
+    BoolValue should_show_accident_report = 55 [deprecated = true];
+
+    Int32Value call_fee = 56;
+
+    bool is_reserved_ride = 60;
+
+    // is_reserved_ride가 true면 아래 두 필드는 non-null이다.
+    // 호출예약의 수락 시각 (배차시각)
+    Timestamp reservation_accepted_at = 61;
+
+    // 호출예약의 탑승 예정 시각 (예약시각)
+    Timestamp expected_pick_up_at = 62;
+}

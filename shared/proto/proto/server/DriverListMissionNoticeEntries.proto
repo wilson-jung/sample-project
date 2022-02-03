@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "mission.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 핸들모아앱에서 미션 종류 별로 공지사항 목록을 조회할 때 사용한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListMissionNoticeEntriesParams {
+    DriverMissionDTO.MissionType mission_type = 1;
+    // 콜 수신이 켜져있는지 여부
+    BoolValue is_receiving_mission = 2;
+}
+
+message DriverListMissionNoticeEntriesResult {
+    message Entry {
+        string title = 1;
+        string link = 2;
+    }
+
+    repeated Entry entries = 1;
+}

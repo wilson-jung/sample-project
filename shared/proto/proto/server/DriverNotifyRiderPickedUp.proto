@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverNotifyRiderPickedUpProto";
+
+// 설명:
+// 드라이버가 도착지에서 라이더를 픽업했을때 드라이버앱에서 호출한다.
+// 만약 이미 Ride가 PICKED_UP 상태라면 그냥 성공한 것처럼 처리된다. (멱등성 원칙)
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 RideId에 해당하는 라이드가 존재하지 않을때
+// BAD_REQUEST: 드라이버에게 할당된 Ride가 아닐때
+// BAD_REQUEST: ACCEPTED 혹은 ARRIVED 상태가 아닐때
+
+message DriverNotifyRiderPickedUpParams {
+    string rideId = 1;
+}
+
+message DriverNotifyRiderPickedUpResult {
+    RideDTO ride = 1;
+}

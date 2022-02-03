@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "ride_reservation.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 라이더앱에서 여러 경우에 특정 RideReservation을 조회해야되는 경우 호출한다.
+//
+// 에러코드:
+// BAD_REQUEST: Ride가 없는 경우
+
+message UserGetRideReservationParams {
+    string ride_reservation_id = 1;
+}
+
+message UserGetRideReservationResult {
+    RideReservationDTO ride_reservation = 1;
+}

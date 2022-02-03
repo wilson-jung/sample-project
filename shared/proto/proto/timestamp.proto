@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package taxi;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol";
+option java_outer_classname = "TimestampProto";
+
+message Timestamp {
+    // number of milliseconds from the epoch of 1970-01-01T00:00:00Z
+    int64 value = 1;
+}

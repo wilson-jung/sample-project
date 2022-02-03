@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserListVehicleManufacturersProto";
+
+// 설명:
+// 유저 차량 등록에 보여줄 차량 제조사 목록을 조회한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserListVehicleManufacturersParams {
+}
+
+message UserListVehicleManufacturersResult {
+    repeated string manufacturers = 1;
+}

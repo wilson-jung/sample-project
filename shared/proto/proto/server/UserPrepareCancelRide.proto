@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserPrepareCancelRideProto";
+
+// 설명:
+// 라이더가 호출 취소 버튼을 누르면 라이더 앱에서 호출된다.
+// 라이더 앱에서 어떤 팝업을 보여줘야하는 지 알려준다.
+// cancelRideToken에 유저가 호출 취소 버튼을 눌렀을 때 상태를 저장한다
+// params에 토큰이 들어온 경우 이를 고려해준다.
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 RideId에 해당하는 라이드가 존재하지 않을때
+// BAD_REQUEST: 드라이버에게 할당된 Ride가 아닐때
+// BAD_REQUEST: Cancel 할 수 있는 상태가 아닐때
+
+message UserPrepareCancelRideParams {
+    string ride_id = 1;
+}
+
+message UserPrepareCancelRideResult {
+    // 일반적인 경우 CancelRideToken이 내려가며,
+    // 호출예약으로 생성된 Ride의 경우 cancelRideReservationToken이 내려간다.
+    string cancel_ride_token = 1;
+    string popup_title = 2;
+    string popup_body = 3;
+    string popup_action_button = 4;
+}

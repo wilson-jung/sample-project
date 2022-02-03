@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverListDriverLevelRecordsProto";
+
+// 설명:
+// 드라이버앱에서 레벨 이력을 가져올 떄 드라이버 앱에서 호출된다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListDriverLevelRecordsParams {
+}
+
+message DriverListDriverLevelRecordsResult {
+    message DriverLevelRecord {
+        // 연도와 월
+        int32 year = 1;
+        int32 month = 2;
+        // 해당 월의 드라이버 레벨
+        DriverLevelDescription level = 3;
+    }
+    repeated DriverLevelRecord level_records = 1;
+}

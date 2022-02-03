@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverNotifyRiderArrivedAtDestinationProto";
+
+// 설명:
+// 드라이버가 라이더를 태우고 목적지에 도착했을때 호출한다.
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 RideId에 해당하는 라이드가 존재하지 않을때
+// BAD_REQUEST: 드라이버에게 할당된 Ride가 아닐때
+// BAD_REQUEST: PICKED_UP 상태가 아닐때
+
+message DriverNotifyRiderArrivedAtDestinationParams {
+    string rideId = 1;
+}
+
+message DriverNotifyRiderArrivedAtDestinationResult {
+    RideDTO ride = 1;
+    // 기계식 미터기일 때는 0이 내려감
+    int32 total_price = 2;
+
+    int32 call_fee = 3;
+}

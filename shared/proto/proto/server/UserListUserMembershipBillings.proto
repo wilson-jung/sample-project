@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+import "user_subscription.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserListUserMembershipBillingsProto";
+
+// 설명:
+// 패스포트 결제 내역을 보여주기 위해 라이더 앱에서 호출한다.
+// 만료되지 않은 결제 내역만 보여줄 수도 있다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+
+message UserListUserMembershipBillingsParams {
+    BoolValue unexpired_only = 1;
+}
+
+message UserListUserMembershipBillingsResult {
+    repeated UserSubscriptionBillingDTO billings = 1;
+}

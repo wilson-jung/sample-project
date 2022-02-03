@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserUpdatePreferencesProto";
+
+// 설명:
+// 사용자의 설정을 변경할 때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserUpdatePreferencesParams {
+    BoolValue isMarketingNotificationEnabled = 1;
+    BoolValue isMarketingEmailEnabled = 2;
+    BoolValue isMarketingSmsEnabled = 3;
+    BoolValue isInformativeNotificationEnabled = 4;
+    BoolValue isInformativeEmailEnabled = 5;
+    BoolValue isInformativeSmsEnabled = 6;
+}
+
+// 응답 :
+// 사용자의 preferences 상태를 DTO로 응답해준다.
+
+message UserUpdatePreferencesResult {
+    UserPreferencesDTO preferences = 1;
+}

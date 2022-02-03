@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package taxi.server;
+
+import "membership.proto";
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명
+//
+// 유저가 구독을 해지 취소할 때 라이더 앱에서 호출된댜.
+// 만약 ACTIVE 상태인 구독이라면 성공한 것처럼 처리된다. (멱등성 원칙)
+//
+// 에러코드
+//
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+// BAD_REQUEST: 해당 구독이 존재하지 않는 경우
+// BAD_REQUEST: UserMembership 이 만료된 경우
+
+message UserReactivateUserMembershipParams {
+    string membership_id = 1;
+}
+
+message UserReactivateUserMembershipResult {
+    UserMembershipDTO membership = 1;
+}

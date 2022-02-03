@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserListFailedPaymentsProto";
+
+// 설명:
+// 유저가 미수금이 있는 payment를 받아올 때 라이더앱에서 호출된다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+// 미수금이 있는 Payment가 없는 경우 empty list가 응답된다.
+
+message UserListFailedPaymentsParams {
+}
+
+message UserListFailedPaymentsResult {
+    repeated PaymentDTO failedPayments = 1;
+}

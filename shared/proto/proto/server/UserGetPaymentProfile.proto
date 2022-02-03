@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetPaymentProfileProto";
+
+// 설명:
+// 라이더앱에서 특정 PaymentProfile을 조회해야되는 경우 호출한다.
+//
+// 에러코드:
+// BAD_REQUEST: PaymentProfile이 없는 경우
+
+message UserGetPaymentProfileParams {
+    string payment_profile_id = 1;
+}
+
+message UserGetPaymentProfileResult {
+    PaymentProfileDTO payment_profile = 1;
+}

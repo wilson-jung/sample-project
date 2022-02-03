@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverListDriverProtectionFeeProductPurchasesProto";
+
+// 설명:
+// 드라이버앱에서 PF 결제내역을 조회할 때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListDriverProtectionFeeProductPurchasesParams {
+    StringValue next_token = 1;
+    Int32Value limit = 2;
+}
+
+message DriverListDriverProtectionFeeProductPurchasesResult {
+    repeated DriverProtectionFeeProductPurchaseDTO driver_protection_fee_product_purchases = 1;
+    StringValue next_token = 2;
+}

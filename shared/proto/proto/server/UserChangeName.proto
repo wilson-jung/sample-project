@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserChangeNameProto";
+
+// 설명 :
+// 사용자가 닉네임을 변경할 때 호출한다.
+//
+// 에러 :
+// INVALID_NICKNAME_FORMAT : 닉네임 형식이 올바르지 않은 경우
+
+message UserChangeNameParams {
+    string name = 1;
+}
+
+// 응답 : user
+
+message UserChangeNameResult {
+    UserDTO user = 1;
+}

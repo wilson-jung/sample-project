@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+import "ride.proto";
+import "trip.proto";
+import "ride_reservation.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverGetDriverStatusProto";
+
+// 설명:
+// 드라이버앱에서 현재 드라이버 상태를 종합적으로 조회하기 위해 호출한다.
+// 보통 드라이버앱이이 Foreground로 올라올때마다 호출하거나 적절할떄 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverGetDriverStatusParams {
+}
+
+message DriverGetDriverStatusResult {
+    DriverDTO driver = 1;
+    DriverStatusDTO driverStatus = 2;
+    // 바뀔 사항 :
+    //   - 드라이버에게 할당되거나 나중에 할당될 차량은 driverSchedule.vehicle을 통해 차량을 내려준다.
+    // 유의 사항 :
+    //   - 아직 할당 예정인 차량이 없을 경우 driverSchedule.vehicle이 null일 수 있음.
+    DriverScheduleDTO driverSchedule = 3;
+    // 현재 :
+    //   1. 드라이버가 이미 운행 중인 차량, 2. 드라이버에게 할당된 차량, 3. 미래에 드라이버에게 할당될 차량을 내려주었다.
+    // 바뀔 사항 :
+    //   - semantic에서는 드라이버가 이미 운행 중인 차량만 내려줄 예정이다.
+    //   - 드라이버에게 할당된 차량이나 나중에 할당될 차량은 driverSchedule.vehicle을 통해 내려주도록 바뀔 것이다.
+    // 유의 사항 :
+    //   - 출근 전 화면에서는 vehicle을 사용하면 안 됨. (e.g. 출근 전, 퇴근 이후)
+    VehicleDTO vehicle = 4;
+    RideDTO ride = 5;
+    RideDTO forward_ride = 7;
+    TripDTO trip = 6;
+    RideReservationDTO nearest_ride_reservation = 8;
+    // 유의사항 :
+    //   - 드라이버가 넥스트가 아닐 경우 null이 내려감
+    StringValue tada_next_ride_report_url = 9;
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package taxi.web_bridge;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.web_bridge";
+
+// 설명:
+// 인앱 브라우저를 닫는다.
+//
+
+message CloseInAppBrowserParams {
+}
+
+message CloseInAppBrowserResult {
+}

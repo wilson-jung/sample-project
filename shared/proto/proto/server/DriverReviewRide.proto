@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverReviewRideProto";
+
+// 설명:
+// 드라이버앱에서 라이드가 끝난 후 리뷰를 남길때 이용한다.
+//
+// 에러코드:
+// BAD_REQUEST: Ride가 없는 경우
+
+message DriverReviewRideParams {
+    enum RideRatingTag {
+        // 기타 (직접입력)
+        CUSTOM = 0;
+        // 과도한 대기시간 발생
+        LONG_WAITING = 1;
+        // 하대하는 언행 (갑질)
+        RUDE_ATTITUDE = 2;
+        // 법규위반 요구 (과속, 신호위반 등)
+        REQUEST_ILLEGAL = 3;
+        // 차내 흡연
+        SMOKING = 4;
+        // 음식물 섭취
+        INGESTION = 5;
+        // 쓰레기 투기 (더럽게 쓰는 경우)
+        GARBAGE_DUMPING = 6;
+        // 차내 소란
+        NOISY = 7;
+        // 마스크 착용하지 않음
+        NO_MASK = 8;
+        // (대리) 반말 및 무례한 태도였습니다
+        UNKIND = 100;
+        // (대리) 요청하지 않은 경로를 강요했습니다
+        FORCE_ROUTE = 101;
+        // (대리) 술에 취해 안 일어났습니다
+        DRUNKEN = 102;
+        // (대리) 대기를 길게 했습니다
+        DAERI_LONG_WAIT = 103;
+    }
+    string rideId = 1;
+    // 좋아요 : 0, 싫어요 : -1
+    int32 rideRating = 2;
+    StringValue reason = 3;
+    repeated RideRatingTag rideRatingTags = 4;
+    BoolValue prevent_same_rider_matching = 5;
+}
+
+message DriverReviewRideResult {
+}

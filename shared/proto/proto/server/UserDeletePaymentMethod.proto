@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserDeletePaymentMethodProto";
+
+// 설명:
+// 사용자가 결제 수단을 삭제할 때 라이더앱에서 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+// USER_PAYMENT_METHOD_MISMATCH : 사용자에 해당되지 않는 결제 수단을 삭제하려는 경우
+// PAYMENT_METHOD_NOT_EXIST : 해당 결제 수단이 존재하지 않을 경우
+
+message UserDeletePaymentMethodParams {
+    string paymentMethodId = 1;
+}
+
+message UserDeletePaymentMethodResult {
+}

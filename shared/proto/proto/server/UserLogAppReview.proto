@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserLogAppReviewProto";
+
+// 설명:
+// 앱 리뷰 요청 응답 값
+
+message UserLogAppReviewParams {
+    bool isAppReviewed = 1;
+}
+
+message UserLogAppReviewResult {
+}

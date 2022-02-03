@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "ride.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명 :
+// Ride의 할인 수단을 변경할 때 라이더앱에서 호출된다.
+
+message UserUpdateDiscountOptionsOfRideParams {
+    string ride_id = 1;
+    StringValue coupon_id = 2;
+    BoolValue uses_credit = 3;
+}
+
+message UserUpdateDiscountOptionsOfRideResult {
+    RideDTO ride = 1;
+}

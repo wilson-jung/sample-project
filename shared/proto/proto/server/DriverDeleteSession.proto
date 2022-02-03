@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverDeleteSessionProto";
+
+// 설명:
+// 로그아웃할때 호출한다. PushToken을 없애고 AccessToken을 무효화 시킨다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverDeleteSessionParams {
+}
+
+message DriverDeleteSessionResult {
+}

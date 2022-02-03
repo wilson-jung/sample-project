@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserFindEmailByPhoneNumberProto";
+
+// 설명:
+// 유저가 이메일을 찾고 싶을 때 호출한다.
+//
+// 에러코드:
+// ACCOUNT_DOES_NOT_EXIST: 주어진 전화번호로 가입한 이메일이 존재하지 않는 경우
+
+message UserFindEmailByPhoneNumberParams {
+    string verifiedPhoneNumberToken = 1;
+}
+
+message UserFindEmailByPhoneNumberResult {
+    string email = 1;
+}

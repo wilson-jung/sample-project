@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetPaymentProfileWithActivationStatusTokenProto";
+
+// 설명:
+// 라이더앱에서 특정 PaymentProfile의 인증 완료 여부를 조회해야되는 경우 호출한다.
+//
+// 에러코드:
+// PAYMENT_PROFILE_DOES_NOT_EXIST: PaymentProfile이 없는/아직 안 만들어진 경우
+
+message UserGetPaymentProfileWithActivationStatusTokenParams {
+    string activation_status_token = 1;
+}
+
+message UserGetPaymentProfileWithActivationStatusTokenResult {
+    PaymentProfileDTO payment_profile = 1;
+}

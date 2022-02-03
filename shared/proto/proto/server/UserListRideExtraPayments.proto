@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserListRideExtraPaymentsProto";
+
+// 설명:
+// 특정 라이드의 영업손실비 추가과금 내역을 내려준다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserListRideExtraPaymentsParams {
+    string rideId = 1;
+}
+
+// 응답:
+// RideExtraPaymentDTO의 리스트가 내려간다.
+
+message UserListRideExtraPaymentsResult {
+    message RideExtraPaymentDTO {
+        enum Type {
+            DEFAULT = 0;
+            TIP = 1;
+        }
+        RideReceipt receipt = 1;
+        RidePaymentMethodDTO paymentMethod = 2;
+        RidePaymentProfileDTO paymentProfile = 3;
+        Type type = 4;
+    }
+
+    repeated RideExtraPaymentDTO extraPayments = 1;
+}

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 사용자가 크레딧 현황를 알기 위해 라이더 앱에서 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserGetCreditStatusParams {
+}
+
+message UserGetCreditStatusResult {
+    // 크레딧 잔액 총합
+    int32 total_credit_amount = 1;
+    // 사용할 수 있는 크레딧 양
+    int32 available_credit_amount = 2;
+
+    // 패스포트 멤버십 넛지 url
+    // url이 내려오면 크레딧뷰 패스포트 넛지 처리를 해주어야 합니다.
+    StringValue passport_membership_nudge_url = 3;
+}

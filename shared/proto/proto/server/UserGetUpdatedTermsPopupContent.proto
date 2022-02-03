@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetUpdatedTermsPopupContentProto";
+
+// 설명:
+// 유저가 새로 수락해야하는 약관이 있는지 조회한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserGetUpdatedTermsPopupContentParams {
+    // 비어있음.
+}
+
+message UserGetUpdatedTermsPopupContentResult {
+    string title = 1;
+    string description = 2;
+    repeated TermsEntry terms_entries = 8;
+    string acceptToken = 4;
+    StringValue imageUrl = 5;
+    bool isSkipAvailable = 6;
+    Type type = 7;
+
+    enum Type {
+        HEAVY = 0;
+        LIGHT = 1;
+    }
+}

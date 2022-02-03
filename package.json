@@ -1,5 +1,5 @@
 {
-  "name": "sample-project",
+  "name": "dragonball",
   "private": true,
   "scripts": {
     "plugin:build": "yarn workspace yarn-plugin-vcnc build && yarn plugin import ./plugin/bundles/@yarnpkg/plugin-vcnc.js",

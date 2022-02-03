@@ -1,0 +1,40 @@
+{
+  "name": "@tada-shared/util-format",
+  "version": "0.0.1",
+  "main": "./src/index.ts",
+  "publishConfig": {
+    "access": "public",
+    "source": "./src/index.ts",
+    "main": "./dist/index.js",
+    "module": "./dist/index.module.js",
+    "exports": "./dist/index.module.js",
+    "types": "./dist/index.d.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "yarn clean && microbundle build --tsconfig ./tsconfig.build.json --jsx jsx --jsxImportSource react --globals react/jsx-runtime=jsx --compress -f esm,cjs",
+    "dev": "yarn clean && microbundle watch --tsconfig ./tsconfig.build.json --jsx jsx --jsxImportSource react --globals react/jsx-runtime=jsx --compress -f esm",
+    "clean": "rm -rf ./dist",
+    "prepublishOnly": "yarn build",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --passWithNoTests --watch",
+    "type-check": "tsc --noemit"
+  },
+  "devDependencies": {
+    "@babel/runtime": "*",
+    "@dragonball-shared/proto": "workspace:shared/proto",
+    "@types/jest": "^27.0.2",
+    "@types/lodash": "^4",
+    "@types/numeral": "^2.0.1",
+    "date-fns": "^2.22.1",
+    "ts-jest": "^27.0.7",
+    "typescript": "^4.3.4"
+  },
+  "peerDependencies": {
+    "@babel/runtime": "*",
+    "@dragonball-shared/proto": "*"
+  }
+}

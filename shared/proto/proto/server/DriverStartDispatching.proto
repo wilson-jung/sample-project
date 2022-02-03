@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverStartDispatchingProto";
+
+// 설명:
+// 드라이버가 수신중 상태로 갈떄 드라이버앱에서 호출한다.
+//
+// 에러코드:
+// BAD_REQUEST: 이미 드라이버에게 할당되어 운행중인 Ride가 있는 경우.
+
+message DriverStartDispatchingParams {
+}
+
+message DriverStartDispatchingResult {
+    DriverStatusDTO driverStatus = 1;
+}

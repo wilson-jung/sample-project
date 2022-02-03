@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetLatestClientVersionProto";
+
+// 설명 :
+// 최신 버전 정보를 받고 싶을 경우 호출한다.
+
+message UserGetLatestClientVersionParams {
+}
+
+// 응답 :
+// OS별 최신 버전 정보
+
+message UserGetLatestClientVersionResult {
+    string latestAndroidClientVersion = 1;
+    string latestIosClientVersion = 2;
+}

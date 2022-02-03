@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "user_subscription.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetUserSubscriptionProto";
+
+// 설명:
+// 단일 구독 상품 정보를 조회한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+
+message UserGetUserSubscriptionParams {
+    string subscription_id = 1;
+}
+
+message UserGetUserSubscriptionResult {
+    UserSubscriptionDTO subscription = 1;
+}

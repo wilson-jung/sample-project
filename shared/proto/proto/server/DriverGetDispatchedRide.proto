@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverGetDispatchedRideProto";
+
+// 설명:
+// 드라이버앱에서 배차되었다는 이벤트를 받은 경우, 배차된 Ride 정보를 가져올때 호출된다.
+// 보통은 배차 된후 짧은 시간(3초)안에 호출되어야 하며, 3초 이내에 가져가지 않은 경우 다른 드라이버에게 배차된다.
+// 3초 이내에 호출되면 Ride가 드라이버에게 확실하게 할당되며, 이 떄 부터 배차 수락 타임아웃(15초)가 시작된다.
+// 위와 같이 타임아웃되거나 실제로 배차된 Ride가 없는 경우에 응답값은 비어있는 값이 내려가게 된다.
+//
+// 에러코드:
+// 공통 에러 코드만 내려간다. (AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+
+message DriverGetDispatchedRideParams {
+}
+
+message DriverGetDispatchedRideResult {
+    RideDTO ride = 1;
+    int32 dispatch_timeout_seconds = 2;
+}

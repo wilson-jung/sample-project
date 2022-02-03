@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+import "timestamp.proto";
+import "common.proto";
+import "wrappers.proto";
+import "user_subscription.proto";
+
+package taxi;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol";
+option java_outer_classname = "UserMembershipProto";
+
+message UserMembershipProductDTO {
+    enum ProductIdentifier {
+        UNKNOWN_PRODUCT_IDENTIFIER = 0;
+        PASSPORT_202106_TADA = 1; // 타다 쿠폰 더 많이 주는 상품
+        PASSPORT_202106_SOCAR = 2; // 쏘카 쿠폰 더 많이 주는 상품
+    }
+
+    enum BenefitPackageType {
+        UNKNOWN = 0;
+        WELCOME = 1; // 웰컴 기프트 (1회차 혜택)
+        GIFT = 2; // 기프트 패키지 (2회차 이상 혜택)
+    }
+
+    string id = 1;
+
+    int32 price = 2;
+    int32 monthly_price = 3;
+
+    ProductIdentifier identifier = 4;
+
+    // 혜택 패키지 타입
+    BenefitPackageType benefit_package_type = 5;
+
+    // 라이트 첫 달 20% 할인 프로모션 적용 여부
+    bool lite_promotion_included = 6;
+}
+
+message UserMembershipDTO {
+    enum UserMembershipSource {
+        UNKNOWN = 0;
+        VCNC = 1;
+        SOCAR = 2;
+    }
+
+    string id = 1;
+
+    // 현재 적용 중인 혜택의 상품 identifier
+    UserMembershipProductDTO.ProductIdentifier product_identifier = 2;
+
+    // 타다/쏘카 중 어디서 구매되었는지를 나타낸다.
+    UserMembershipSource source = 3;
+
+    // 다음 정기 결제에 쓰일 결제 수단
+    // optional (쏘카에서 구독한 경우에는 없음)
+    PaymentMethodDTO payment_method = 4;
+
+    // 다음 결제일에 결제가 예정되어있는지, 아니면 해지해서 예정되어있지 않은지를 나타낸다.
+    UserSubscriptionDTO.Status user_subscription_status = 5;
+
+    // 현재 구독이 몇 회차인지 나타낸다.
+    int32 renewal_count = 6;
+
+    // 구독 시작일
+    Timestamp valid_after = 7;
+
+    // 구독 만료일
+    // 다음 결제일은 user_subscription_status 랑 expires_at 가지고 판단해서 보여준다.
+    Timestamp expires_at = 8;
+
+    // 혜택 타입
+    UserMembershipProductDTO.BenefitPackageType benefit_package_type = 9;
+
+    // 라이트 첫 달 20% 할인 프로모션 적용 여부
+    bool lite_promotion_included = 10;
+
+    // 갱신 유예 여부
+    bool deactivation_delayed = 11;
+
+    // 환불 가능 여부 (타다에서 구입한 경우에만 있음)
+    BoolValue refund_available = 15;
+
+    // 유저의 휴대폰 번호
+    string phone_number = 12;
+
+    // 연동 여부
+    bool membership_synced = 13;
+
+    // 쏘카 앱으로 연결되는 deeplink
+    string socar_sync_deeplink = 14;
+}

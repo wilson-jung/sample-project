@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserUpdatePaymentProfileOfRideProto";
+
+// 설명 :
+// 라이더가 이미 생성된 Ride의 payment profile을 변경하고 싶을 때 호출된다.
+//
+// 에러코드:
+// BAD_REQUEST:
+//   - 잘못된 rideId
+//   - 잘못된 Ride의 상태 (DROPPED_OFF, CANCELED)
+//   - 잘못된 paymentProfileId
+// 기타: 공통 에러코드
+
+message UserUpdatePaymentProfileOfRideParams {
+    // payment profile을 변경하고 싶은 Ride의 id.
+    string rideId = 1;
+    // 변경할 payment profile의 id.
+    string paymentProfileId = 2;
+}
+
+message UserUpdatePaymentProfileOfRideResult {
+    // 변경된 ride를 내려준다.
+    RideDTO ride = 1;
+}

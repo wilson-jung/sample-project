@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package taxi.server;
+
+import "wrappers.proto";
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "BrazeWebhookProto";
+
+
+message BrazeWebhookParams {
+    enum Event {
+        MARKETING_AGREEMENT_BOOSTING_201909 = 0 [deprecated = true];
+        CAMPAIGN = 1;
+        MARKETING_AGREEMENT_CAMPAIGN = 2;
+        CUSTOM_LOG = 3;
+    }
+    string user_id = 1;
+    Event event = 2;
+    StringValue campaign_id = 3;
+    BoolValue provide_coupon_once_per_user_id = 5;
+    StringValue tag = 4;
+}
+
+message BrazeWebhookResult {
+}

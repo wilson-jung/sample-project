@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverControlVehicleProto";
+
+// 설명:
+// 드라이버가 스마트키로 자동차를 제어할 때 호출된다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverControlVehicleParams {
+    string vehicleId = 1;
+    SmartKeyCommand controlCommand = 2;
+}
+
+message DriverControlVehicleResult {
+}

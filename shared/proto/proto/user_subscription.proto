@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+import "timestamp.proto";
+import "common.proto";
+import "wrappers.proto";
+
+package taxi;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol";
+option java_outer_classname = "UserSubscriptionProto";
+
+message UserSubscriptionBillingReceipt {
+    // 가격
+    int32 price = 1;
+
+    // 환불된 가격 (환불된 경우에만 내려간다.)
+    Int32Value refund_amount = 2;
+
+    // 가격 - 환불된 가격
+    int32 total = 3;
+}
+
+message UserSubscriptionProductDTO {
+    enum ProductIdentifier {
+        UNKNOWN_PRODUCT_IDENTIFIER = 0;
+        PASSPORT_202106_TADA = 1; // 타다 쿠폰 더 많이 주는 상품
+        PASSPORT_202106_SOCAR = 2; // 쏘카 쿠폰 더 많이 주는 상품
+    }
+
+    string id = 1;
+
+    int32 price = 2;
+
+    ProductIdentifier identifier = 4;
+}
+
+message UserSubscriptionDTO {
+    enum Status {
+        ACTIVE = 0;
+        DEACTIVATED = 1;
+    }
+
+    enum DeactivatedReasonType {
+        USER_REQUESTED = 0;
+        PAY_FAILED = 1;
+        PAY_TIMEOUT = 2;
+    }
+
+    string id = 1;
+
+    // 구독상품 이름
+    string subscription_product_name = 2;
+
+    // 다음 정기 결제에 쓰일 결제 수단
+    PaymentMethodDTO payment_method = 3;
+
+    Status status = 4;
+
+    // 가장 최근에 결제된 subscription의 billing이 몇 회차인지 나타낸다.
+    int32 total_billing_count = 5;
+
+    // 구독이 해지된 이유
+    DeactivatedReasonType deactivated_reason_type = 6;
+
+    // 현재 유효한 billing. 현재 이용 중인 상품의 이용기간 등을 표시할 때 사용된다.
+    UserSubscriptionBillingDTO current_billing = 7;
+
+    // 다음 결제일
+    Timestamp next_billing_create_at = 8;
+
+    // 현재 적용 중인 혜택의 상품 identifier (PASSPORT_202106_TADA, PASSPORT_202106_SOCAR)
+    UserSubscriptionProductDTO.ProductIdentifier current_product_identifier = 9;
+}
+
+message UserSubscriptionBillingDTO {
+    enum Status {
+        COMPLETED = 0;
+        FAILED = 1;
+        REFUNDED = 2;
+    }
+    string id = 1;
+
+    // 구독상품 이름
+    string subscription_product_name = 2;
+
+    // 결제되었던 결제 수단
+    PaymentMethodDTO payment_method = 3;
+
+    Status status = 4;
+
+    UserSubscriptionBillingReceipt receipt = 5;
+
+    // 해당 UserSubscription에 대해 몇 회차인지 나타낸다.
+    int32 billing_count = 6;
+
+    // 이용기간 시작일
+    Timestamp valid_after = 7;
+
+    // 이용기간 종료일
+    Timestamp expires_at = 8;
+
+    // 결제일
+    Timestamp charged_at = 9;
+}

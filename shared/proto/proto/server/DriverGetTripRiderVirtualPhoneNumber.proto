@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 라이더의 가상 전화번호를 응답한다.
+// 가상 번호가 없거나 만료된 경우 새로 할당하고 응답한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+// BAD_REQUEST: trip 이 없는 경우
+
+message DriverGetTripRiderVirtualPhoneNumberParams {
+    string trip_id = 1;
+}
+
+message DriverGetTripRiderVirtualPhoneNumberResult {
+    // 드라이버의 가상 전화번호
+    string rider_virtual_phone_number = 1;
+}

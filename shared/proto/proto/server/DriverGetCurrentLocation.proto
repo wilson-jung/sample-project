@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "common.proto";
+import "timestamp.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverGetCurrentLocationProto";
+
+// 설명:
+// 드라이버 앱에서 서버가 현재 인지하고 있는 드라이버의 위치를 조회할 때 사용한다.
+//
+// 에러코드:
+// BAD_REQUEST: 출근 중이 아닐 때 요청하는 경우
+
+message DriverGetCurrentLocationParams {
+}
+
+message DriverGetCurrentLocationResult {
+    // 서버가 인지하고 있는 드라이버의 위치
+    // 예외: 첫 출근 직후에는 일시적으로 null일 수 있다.
+    Location current_location = 1;
+    // current_location에 해당하는 주소.
+    // "[시군구] [읍면동]"의 형태로 내려간다.
+    // 예외: 첫 출근 직후에는 일시적으로 empty string일 수 있다.
+    string address = 2;
+    // 드라이버의 위치가 마지막으로 업데이트 된 시각
+    // 예외: 첫 출근 직후에는 일시적으로 null일 수 있다.
+    Timestamp last_updated_at = 3;
+}

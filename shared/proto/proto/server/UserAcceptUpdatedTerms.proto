@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserAcceptUpdatedTermsProto";
+
+// 설명:
+// 유저가 변경된 약관을 동의할때 호출한다.
+//
+// 에러코드:
+// INVALID_ACCEPTED_TERMS : 필수 약관이 빠져 있는 등 조건을 만족하지 않을때 리턴된다.
+
+message UserAcceptUpdatedTermsParams {
+    // GetChangedTerms로 받은 accepToken을 올려줘야 한다.
+    string acceptToken = 1;
+
+    // 유저가 수락한 약관의 아이디 리스트를 올려준다.
+    // 필수 약관은 반드시 포함되어야 하며, 선택약관은 포함되지 않을 수 있다.
+    repeated string acceptingTermsIds = 2;
+}
+
+message UserAcceptUpdatedTermsResult {
+}

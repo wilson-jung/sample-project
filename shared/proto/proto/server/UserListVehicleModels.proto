@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 유저 차량 등록에 보여줄 차량 제조사에 따른 모델 목록을 조회할 때 라이더 앱에서 호출된다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserListVehicleModelsParams {
+    string manufacturer = 1;
+}
+
+message UserListVehicleModelsResult {
+    message VehicleModel {
+        string model = 1;
+        repeated int32 available_seats = 2;
+    }
+    string manufacturer = 1;
+    repeated VehicleModel models = 2;
+}

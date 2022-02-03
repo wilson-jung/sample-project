@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명 :
+// 가장 최근에 생성된 라이드를 내려줍니다.
+
+message UserGetLatestRideParams {
+}
+
+message UserGetLatestRideResult {
+  RideDTO ride = 1;
+}

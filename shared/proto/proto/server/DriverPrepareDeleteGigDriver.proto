@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// [핸들모아] 회원 탈퇴 가능 조건인지 검사
+//
+// 에러코드:
+// 탈퇴 불가 상태일 때 적절한 에러코드가 내려간다.
+
+message DriverPrepareDeleteGigDriverParams {
+}
+
+message DriverPrepareDeleteGigDriverResult {
+}

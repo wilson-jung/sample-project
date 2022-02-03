@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserResolveFailedPaymentProto";
+
+// 설명 :
+// 사용자가 미수금을 해결할 때 라이더앱에서 호출한다.
+//
+// 에러코드 : 딱히 없음
+
+message UserResolveFailedPaymentParams {
+    string paymentId = 1;
+
+    // 결제 수단 ID
+    // 결제 프로필이 있을 때 같이 올리면, 현재 결제 프로필에 붙은 결제 수단과 다른 경우 오류가 발생한다.
+    string paymentMethodId = 2;
+
+    // 결제 프로필 ID
+    StringValue paymentProfileId = 3;
+}
+
+
+// 응답 : PaymentDTO 객체. 상태는 RETRYING이어야 한다.
+// RETRYING 상태가 확인된 후부터는 를 지속적으로 호출해 결과를 응답받는다.
+
+message UserResolveFailedPaymentResult {
+    PaymentDTO payment = 1;
+}

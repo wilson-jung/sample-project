@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// [핸들모아] 회원 탈퇴
+//
+// 에러코드:
+// 추후 추가될 예정
+
+message DriverDeleteGigDriverParams {
+    enum DeletionReasonType {
+        // 대리운전업을 그만둠
+        QUIT = 0;
+        // 다른 대리서비스 이용
+        OTHER_SERVICE = 1;
+        // 콜 요청이 많지 않음
+        FEW_CALLS = 2;
+        // 운영방식 불만
+        OPS_DISSATISFACTION = 3;
+        // 기타 (직접 입력)
+        CUSTOM = 4;
+    }
+    DeletionReasonType type = 1;
+    // CUSTOM이 없는 경우 빈 문자열로 올려줍니다.
+    string reason = 2;
+    // 본인인증
+    string identity_certification_token = 3;
+}
+
+message DriverDeleteGigDriverResult {
+}

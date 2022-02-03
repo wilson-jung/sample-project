@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserSendPhoneNumberVerificationCodeProto";
+
+// 설명 :
+// 휴대폰 번호로 인증 코드를 받기 위해 호출한다.
+//
+// 에러코드 :
+// SMS_SEND_FAILURE : 코드가 SMS로 보내지지 않은 경우
+
+message UserSendPhoneNumberVerificationCodeParams {
+    enum SmsRetrieverOption {
+        DISABLE = 0;
+        ENABLE_RELEASE = 1;
+        ENABLE_DEBUG = 2;
+    }
+    string phoneNumber = 1;
+
+    // 안드로이드의 경우 SMS Retrever API를 사용하기 위한 필드. 적절한 값을 올려주면 된다.
+    // 아이폰은 아예 안올려주거나 DISABLE을 올려주면 된다. (필드 자체를 선언하지 않아도 상관 없음)
+    SmsRetrieverOption smsRetrieverOption = 2;
+}
+
+message UserSendPhoneNumberVerificationCodeResult {
+    string verificationToken = 1;
+    int64 expiry = 2;
+}

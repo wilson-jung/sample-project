@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "trip.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverNotifyTripRiderDroppedOffProto";
+
+// 설명:
+// 드라이버가 도착지에서 라이더를 내려 줄 때 드라이버앱에서 호출한다.
+// 만약 이미 TripRide가 DROPPED_OFF 상태라면 그냥 성공한 것처럼 처리된다. (멱등성 원칙)
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 TripRideId에 해당하는 라이드가 존재하지 않을때
+// BAD_REQUEST: 드라이버에게 할당된 Trip이 아닐때
+// BAD_REQUEST: PICKED_UP 상태가 아닐때
+
+message DriverNotifyTripRiderDroppedOffParams {
+    string tripId = 1;
+
+    // 프라이빗의 경우, 현재 시간이 예약 종료 시간보다 너무 이른 경우 운행 완료를 눌렀을 때, 드라이버가 확인했는지의 여부.
+    // 먼저 false로 해서 요청해본 후, CONFIRM_REQUIRED 에러 발생시 드라이버에게 확인을 받고 true로 올린다.
+    // 하위 호환을 위해 null이면 true와 같다.
+    BoolValue confirmed = 2;
+}
+
+message DriverNotifyTripRiderDroppedOffResult {
+    TripDTO trip = 1;
+}

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "timestamp.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 타다 호출 예약하기 뷰의 타임피커에서 보여줄 시간 범위를 가져오기 위해 사용한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserGetRideReservationAvailableTimeRangeParams {
+}
+
+message UserGetRideReservationAvailableTimeRangeResult {
+    Timestamp min_available_time = 1;
+    Timestamp max_available_time = 2;
+    int32 time_step_minutes = 3;
+}

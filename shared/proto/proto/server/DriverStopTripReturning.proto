@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverStopTripReturningProto";
+
+// 설명:
+// 드라이버가 퇴근을 위해 차고지로 이동 할 때 드라이버앱에서 호출한다.
+//
+// 에러코드:
+// BAD_REQUEST: Returning 중 상태가 아닐때
+
+message DriverStopTripReturningParams {
+}
+
+message DriverStopTripReturningResult {
+    DriverStatusDTO driverStatus = 1;
+}

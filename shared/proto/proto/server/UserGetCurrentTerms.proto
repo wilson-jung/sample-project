@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetCurrentTermsProto";
+
+// 설명:
+// 최신 약관 리스트를 가져온다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserGetCurrentTermsParams {
+}
+
+message UserGetCurrentTermsResult {
+    repeated TermsEntry terms_entries = 3;
+    string acceptToken = 2;
+    StringValue marketing_agreement_event_banner_body = 4;
+}

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetWebRedirectUrlProto";
+
+// 설명:
+// 라이더 앱에서 딥링크를 통해 웹뷰를 띄워주려고 할 때 호출한다.
+
+message UserGetWebRedirectUrlParams {
+    string deeplink = 1;
+}
+
+message UserGetWebRedirectUrlResult {
+    message CloseAlert {
+        string content = 1;
+        string confirm_button = 2;
+        string cancel_button = 3;
+    }
+    message Cookie {
+        string domain = 1;
+        string name = 2;
+        string value = 3;
+    }
+    string redirect_url = 1;
+    CloseAlert close_alert = 2;
+    // 앱에서 해당 쿠키들을 넣어줘야 한다.
+    repeated Cookie cookies = 3;
+}

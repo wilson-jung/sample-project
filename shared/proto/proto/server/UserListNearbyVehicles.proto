@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserListNearbyVehiclesProto";
+
+message UserListNearbyVehiclesParams {
+    Location location = 1;
+    // 목적지가 있는 경우(ex. 호출뷰)에만 넣어준다.
+    Location destination = 2;
+
+    // 라이드 타입. RideType, RideTypeGroup의 값이 올 수 있다. 여러 값을 넣어주는 것도 가능하다.
+    repeated string rideTypes = 3;
+}
+
+message UserListNearbyVehiclesResult {
+    message TypedVehicleLocation {
+        string rideType = 1;
+        double lng = 2;
+        double lat = 3;
+        double bearing = 4;
+        double speedMeterPerSecond = 5;
+    }
+    repeated TypedVehicleLocation vehicleLocations = 1;
+}

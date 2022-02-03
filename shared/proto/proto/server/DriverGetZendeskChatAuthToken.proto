@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명 :
+// Zendesk Chat 인증을 위한 JWT Token을 발급한다.
+// https://develop.zendesk.com/hc/en-us/articles/360052354433
+//
+// 에러코드:
+// 공통 에러
+
+message DriverGetZendeskChatAuthTokenParams {
+}
+
+message DriverGetZendeskChatAuthTokenResult {
+    string auth_token = 1;
+}

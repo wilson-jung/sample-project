@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package taxi.server;
+
+import "mission.proto";
+import "wrappers.proto";
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 핸들모아앱에서 핸들레벨 적립 내역을 조회할 때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListMissionRewardRecordDepositEntriesParams {
+    StringValue next_token = 1;
+}
+
+message DriverListMissionRewardRecordDepositEntriesResult {
+    repeated MissionRewardRecordDepositEntry entries = 1;
+    StringValue next_token = 2;
+}

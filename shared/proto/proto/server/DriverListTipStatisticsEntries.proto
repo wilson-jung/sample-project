@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverListTipStatisticsEntriesProto";
+
+// 설명:
+// 드라이버앱에서 서비스팁 수익 이력들을 조회할때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListTipStatisticsEntriesParams {
+}
+
+message DriverListTipStatisticsEntriesResult {
+    message Entry {
+        int32 year = 1;
+        int32 month = 2;
+        int32 amountKRW = 3;
+    }
+
+    repeated Entry entries = 1;
+}

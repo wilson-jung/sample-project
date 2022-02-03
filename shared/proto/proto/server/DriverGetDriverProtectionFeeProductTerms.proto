@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverGetDriverProtectionFeeProductTermsProto";
+
+// 설명:
+// 드라이버 PF 약관을 가져온다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverGetDriverProtectionFeeProductTermsParams {
+}
+
+message DriverGetDriverProtectionFeeProductTermsResult {
+    message Section {
+        string title = 1;
+        string description = 2;
+    }
+    string title = 1;
+    repeated Section sections = 2;
+}

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "mission.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverListMissionDispatchTicketCampaignsProto";
+
+// 설명:
+// 드라이버가 1:1 배정권 획득 이벤트 현황을 확인할 때 핸들모아 앱에서 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListMissionDispatchTicketCampaignsParams {
+}
+
+// 응답:
+// MissionDispatchTicketCampaignDTO의 리스트가 내려간다.
+
+message DriverListMissionDispatchTicketCampaignsResult {
+    repeated MissionDispatchTicketCampaignDTO campaigns = 1;
+}

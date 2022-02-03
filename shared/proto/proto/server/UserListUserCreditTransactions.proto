@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+import "timestamp.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명
+// 라이더 앱에서 내 크레딧 내역을 조회할 때 호출한다.
+
+message UserListUserCreditTransactionsParams {
+    StringValue next_token = 1;
+    Int32Value limit = 2;
+}
+
+message UserListUserCreditTransactionsResult {
+    message CreditTransactionDTO {
+        string description = 1;
+        Timestamp created_at = 2;
+
+        // 만료일의 경우 크레딧이 적립될 때만 내려갑니다.
+        Timestamp expires_at = 3;
+        int32 credit_amount = 4;
+    }
+
+    repeated CreditTransactionDTO user_credit_transactions = 1;
+    StringValue next_token = 2;
+}

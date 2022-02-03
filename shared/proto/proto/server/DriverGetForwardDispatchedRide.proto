@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 드라이버앱에서 포워드 디스패치 배차 이벤트를 받은 경우 해당 Ride 정보를 가져올때 호출된다.
+//
+// 에러코드:
+// 공통 에러 코드만 내려간다. (AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+
+message DriverGetForwardDispatchedRideParams {
+}
+
+message DriverGetForwardDispatchedRideResult {
+    RideDTO ride = 1;
+}

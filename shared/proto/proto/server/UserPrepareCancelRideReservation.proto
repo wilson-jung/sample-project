@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 라이더가 호출예약 취소 버튼을 누르면 라이더 앱에서 호출된다.
+// 라이더 앱에서 어떤 팝업을 보여줘야하는 지 알려준다.
+// cancel_ride_reservation_token에 유저가 취소 버튼을 눌렀을 때 상태를 저장한다.
+// /u/CancelRideReservation 시 이 토큰을 올려주어야 한다.
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 ride_reservation_id에 해당하는 예약호출이 존재하지 않을때
+// BAD_REQUEST: 예약호출이 취소할 수 없는 상태일 때 (e.g. STARTED)
+
+message UserPrepareCancelRideReservationParams {
+    string ride_reservation_id = 1;
+}
+
+message UserPrepareCancelRideReservationResult {
+    string cancel_ride_reservation_token = 1;
+    string popup_title = 2;
+    string popup_body = 3;
+    string popup_action_button_text = 4;
+}

@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserReviewTripProto";
+
+// 설명:
+// 라이더앱에서 라이드가 끝난 후 리뷰를 남길때 이용한다.
+//
+// 에러코드:
+// BAD_REQUEST: Trip이 없는 경우
+
+message UserReviewTripParams {
+    enum TripRatingTag {
+        // 기타 (직접입력)
+        CUSTOM = 0;
+        // 예약시간에 늦음
+        TOO_LATE = 1;
+        // 불친절한 태도
+        UNKIND = 2;
+        // 급정거 및 급발진
+        WILD_DRIVING = 3;
+        // 운행중 휴대폰사용
+        PHONE_USAGE = 4;
+        // 원치 않는 대화
+        TOO_MUCH_TALKER = 5;
+        // 잘못된 길로 진입함
+        DETOUR = 6;
+        // 담배 등 불쾌한 냄새
+        UNCLEAN = 7;
+        // 별점 및 서비스팁 요구
+        MONEY_DEMANDING = 8;
+        // 목적지 및 안전벨트 미확인
+        NO_GREETING = 9;
+    }
+    message Tip {
+        int32 amount = 1;
+        string payment_method_id = 2;
+        string payment_profile_id = 3;
+    }
+    string tripId = 1;
+    int32 tripRating = 2;
+    repeated TripRatingTag tripRatingTags = 3;
+    StringValue reason = 4;
+    Tip tip = 5;
+}
+
+message UserReviewTripResult {
+}

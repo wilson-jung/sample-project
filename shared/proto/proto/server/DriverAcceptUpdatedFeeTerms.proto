@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverAcceptUpdatedFeeTermsProto";
+
+// 설명:
+// [드라이버 앱] 변경된 요금 정산 방식을 수락한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverAcceptUpdatedFeeTermsParams {
+    string accept_token = 1 [(client_deprecated_field) = true];
+    repeated string accepting_terms_ids = 2;
+}
+
+message DriverAcceptUpdatedFeeTermsResult {
+}

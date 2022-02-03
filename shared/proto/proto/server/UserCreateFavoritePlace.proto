@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserCreateFavoritePlaceProto";
+
+// 설명 :
+// 유저가 즐겨찾기를 추가할 때 호출한다.
+// 유저 당 하나만 가질 수 있는 type에 대해 이미 즐겨찾기가 있으면 기존 즐겨찾기를 업데이트한다.
+//
+// 에러 :
+// 공통 에러
+
+message UserCreateFavoritePlaceParams {
+    FavoritePlaceDTO.Type type = 1;
+    StringValue name = 2; // type이 CUSTOM이 아닌 경우 무시됨
+    AddressedLocation location = 3;
+}
+
+message UserCreateFavoritePlaceResult {
+    FavoritePlaceDTO favoritePlace = 1;
+}

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserRefundUserMembershipProto";
+
+// 설명 :
+// 유저가 패스포트 구독을 환불할 때 라이더 앱에서 호출된다. 환불은 만료되지 않은 billing에 대해서만 적용된다.
+// 만약 해지되지 않았다면 해지시킨 후 환불해준다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+// BAD_REQUEST: 해당 패스포트가 존재하지 않는 경우
+// BAD_REQUEST: 환불 가능한 결제가 없는 경우
+// BAD_REQUEST: 환불 불가능한 경우
+// BAD_REQUEST: 진행 중인 결제가 존재하는 경우
+
+message UserRefundUserMembershipParams {
+    string membership_id = 1;
+}
+
+message UserRefundUserMembershipResult {
+}

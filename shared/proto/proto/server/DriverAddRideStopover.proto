@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package taxi.server;
+
+import "ride.proto";
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// [드라이버 앱] 하차 발생 추가 API
+//
+// 에러코드:
+// 공통 에러 코드만 내려간다.
+
+message DriverAddRideStopoverParams {
+    string ride_id = 1;
+    string add_token = 2; // DriverPrepareAddRideStopover API에서 내려준 토큰
+}
+
+message DriverAddRideStopoverResult {
+    RideDTO ride = 1;
+}

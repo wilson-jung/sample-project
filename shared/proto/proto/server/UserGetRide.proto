@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "ride.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetRideProto";
+
+// 설명:
+// 라이더앱에서 여러 경우에 특정 Ride를 조회해야되는 경우 호출한다.
+// 구독하던 Ride가 있었는데 앱이 꺼졌다가 새로 켠 경우, 새로 구독을 하기전에 호출하게 된다.
+//
+// 에러코드:
+// BAD_REQUEST: Ride가 없는 경우
+
+message UserGetRideParams {
+    string rideId = 1;
+}
+
+message UserGetRideResult {
+    RideDTO ride = 1;
+    // 유저 탑승 상세내역에서 드라이버에게 전화하는 버튼을 그려줄지 여부(분실물 찾기)
+    BoolValue showCallDriverButton = 2;
+}

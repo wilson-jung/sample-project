@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserVerifyPhoneNumberProto";
+
+// 설명 :
+// 휴대폰으로 받은 인증 코드가 맞는지 확인할 때 호출한다.
+//
+// 에러코드 :
+// INVALID_VERIFICATION_TOKEN : 휴대폰 인증을 위한 토큰이 유효하지 않은 경우
+// VERIFICATION_TOKEN_EXPIRED : 휴대폰 인증을 위한 토큰이 만료된 경우
+// INVALID_VERIFICATION_CODE : 휴대폰 인증번호가 맞지 않는 경우
+
+message UserVerifyPhoneNumberParams {
+    string code = 1;
+    string verificationToken = 2;
+}
+
+message UserVerifyPhoneNumberResult {
+    string verifiedPhoneNumberToken = 1;
+}

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetAddressProto";
+
+// 설명:
+// 위도,경도로 주소를 알아내고 싶을때 라이더앱에서 호출합니다.
+//
+// 에러코드:
+// BAD_REQUEST: 요청한 위도,경도가 값이 올바르지 않은 경우
+// GEOCODING_FAILURE: 지오코딩을 할 수 없는 지역인 경우 (대한민국 영토 밖)
+
+message UserGetAddressParams {
+    Location location = 1;
+    BoolValue use_poi_name = 2;
+}
+
+message UserGetAddressResult {
+    AddressedLocation location = 1;
+}

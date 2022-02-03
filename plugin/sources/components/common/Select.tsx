@@ -33,7 +33,6 @@ type Props = {
 }
 
 export const Select = ({ values, descriptions, storeKey }: Props) => {
-  console.log('select values', values)
   return (
     <Box marginBottom={1}>
       <ScrollableItems radius={10}>

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserRequestAlternativeRideProto";
+
+// 설명:
+// '다른 이동수단 제안' 배너를 통해 새로운 라이드를 호출하기 위한 API
+// 이미 PENDING 상태의 라이드가 있을 때만 호출 가능하다.
+// - PENDING 상태에서는 라이드가 취소되고 새로운 라이드가 만들어진다.
+// - 그 외의 상태에서는 오류만 발생하고 라이드의 상태는 변경하지 않는다.
+//
+// 에러코드:
+// BAD_REQUEST: 위도,경도가 잘못 된 경우, 알수 없는 RideType을 올려준 경우
+// UNAVAILABLE_ORIGIN: 서비스 지역이 아닌 출발지인 경우
+// UNAVALIABLE_DESTINATION: 서비스 지역이 아닌 도착지인 경우
+// INVALID_ESTIMATION_TOKEN: EstimationToken이 유효하지 않은 경우
+// REESTIMATION_NEEDED: 교통상황의 변화, 토큰 만료 등으로 Estimation을 다시 해야하는 경우
+
+message UserRequestAlternativeRideParams {
+    string alternativeRideSuggestionToken = 1;
+}
+
+message UserRequestAlternativeRideResult {
+    RideDTO ride = 1;
+}

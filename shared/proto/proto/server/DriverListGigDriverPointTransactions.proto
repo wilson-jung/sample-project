@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+import "timestamp.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// [핸들모아] 포인트 적립/출금 내역을 조회한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListGigDriverPointTransactionsParams {
+    StringValue next_token = 1;
+}
+
+message GigDriverPointTransactionDetails {
+    message Property {
+        enum Style {
+            NORMAL = 0;
+            FAILED = 1;
+        }
+
+        string name = 1;
+        string value = 2;
+        // name 밑에 보이는 작은 글씨
+        StringValue description = 3;
+        Style description_style = 4;
+    }
+
+    string title = 1;
+    StringValue description = 2;
+    repeated Property properties = 3;
+    repeated Property line_items = 4;
+    Property total = 5;
+}
+
+message DriverListGigDriverPointTransactionsResult {
+    message Entry {
+        enum Type {
+            DEPOSIT_NORMAL = 0;
+            DEPOSIT_REWARD = 1;
+            DEPOSIT_EVENT = 2;
+            DEPOSIT_FAILED_WITHDRAWAL = 3;
+
+            WITHDRAWAL = 1000;
+        }
+        string id = 1;
+        Timestamp timestamp = 2;
+        string description = 3;
+        string amount = 4;
+        StringValue amount_description = 5;
+        Type type = 6;
+        GigDriverPointTransactionDetails details = 7;
+    }
+    repeated Entry entries = 1;
+    StringValue next_token = 2;
+}

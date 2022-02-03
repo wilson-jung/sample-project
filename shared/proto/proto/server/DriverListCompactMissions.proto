@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+import "mission.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 핸들모아앱에서 수행한 미션 내역 리스트를 내려줄 때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListCompactMissionsParams {
+    enum PeriodType {
+        ALL = 0;
+        MONTHLY = 1;
+        DAILY = 2;
+    }
+    PeriodType period_type = 1;
+    // PeriodType에 해당하는 기간을 포멧에 맞게 넣어준다.
+    // ALL: 빈 값
+    // MONTHLY: YYYY-MM
+    // DAILY: YYYY-MM-DD (KST, 해당 날짜 업무 시작시간 기준. 1월 1일 04시 이라면 1월 1일로 넣어준다.)
+    string period = 2;
+    // 한 번에 받고싶은 개수. 안채우면 32개가 내려간다.
+    Int32Value limit = 3;
+    StringValue next_token = 4;
+}
+
+message DriverListCompactMissionsResult {
+    repeated DriverCompactMissionDTO missions = 1;
+    StringValue next_token = 2;
+}

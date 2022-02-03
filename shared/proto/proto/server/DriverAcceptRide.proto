@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverAcceptRideProto";
+
+// 설명:
+// 드라이버가 배차를 수락할때 드라이버앱에서 호출한다.
+// 만약 이미 수락한 배차라면 그냥 성공한 것처럼 처리된다. (멱등성 원칙)
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 RideId에 해당하는 라이드가 존재하지 않을때
+// BAD_REQUEST: 라이드가 드라이버에게 배차된 상태가 아닌경우
+// BAD_REQUEST: 배차가 타임아웃 난 경우
+
+message DriverAcceptRideParams {
+    string rideId = 1;
+}
+
+message DriverAcceptRideResult {
+    RideDTO ride = 1;
+}

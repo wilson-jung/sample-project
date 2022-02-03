@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "membership.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetUserMembershipProto";
+
+// 설명:
+// 패스포트 상품 정보를 조회한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+
+message UserGetUserMembershipParams {
+}
+
+message UserGetUserMembershipResult {
+    // optional (현재 구독중이지 않은 경우 안내려줌)
+    UserMembershipDTO membership = 1;
+
+    // 유저 이름
+    string user_name = 2;
+}

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserCreateUserVehicleProto";
+
+// 설명:
+// 유저가 대리에 사용할 차량을 등록할 때 라이더앱에서 호출된다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+// TBD
+
+message UserCreateUserVehicleParams {
+    string manufacturer = 1;
+    string model = 2;
+    // 기어 종류
+    UserVehicleDTO.GearType gear_type = 3;
+    string license_plate = 4;
+    int32 seats = 5;
+}
+
+message UserCreateUserVehicleResult {
+    UserVehicleDTO vehicle = 1;
+}

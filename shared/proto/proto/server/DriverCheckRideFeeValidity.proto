@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 드라이버가 기계식 미터기의 금액을 손으로 입력하는 경우에 입력한 금액의 유효성 검사를 위해 호출한다.
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 RideId에 해당하는 라이드가 존재하지 않을때
+// CONFIRM_REQUIRED: 입력한 금액이 실제 이동 경로로 계산함 금액의 2배 이상일 때
+// INVALID_RIDE_FEE: 운행요금이 기본요금보다 적게 입력되었거나, 통행료만 입력되었을 때
+
+message DriverCheckRideFeeValidityParams {
+    string ride_id = 1;
+    // 드라이버가 입력한 택시 사용료
+    int32 usage_fee = 2;
+    // 드라이버가 입력한 톨게이트 비용
+    int32 tollgate_fee =3;
+}
+
+message DriverCheckRideFeeValidityResult {
+}

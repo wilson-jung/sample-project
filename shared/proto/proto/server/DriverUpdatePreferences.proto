@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 드라이버의 설정을 변경할 때 호출된다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverUpdatePreferencesParams {
+    BoolValue isMarketingNotificationEnabled = 1;
+    BoolValue isMarketingSmsEnabled = 2;
+    BoolValue isNightMarketingEnabled = 3;
+}
+
+// 응답 :
+// 드라이버의 설정 상태를 DTO로 응답해준다.
+
+message DriverUpdatePreferencesResult {
+    DriverPreferencesDTO preferences = 1;
+}

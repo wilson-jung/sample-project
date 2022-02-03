@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverListPaymentMethodsProto";
+
+// 설명:
+// 드라이버앱에서 등록된 결제수단을 조회할 때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListPaymentMethodsParams {
+}
+
+message DriverListPaymentMethodsResult {
+    repeated DriverPaymentMethodDTO payment_methods = 1;
+}

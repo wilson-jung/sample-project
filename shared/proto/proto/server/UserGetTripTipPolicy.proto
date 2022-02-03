@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetTripTipPolicyProto";
+
+// 설명:
+// 탑승 종료 후 팁 금액을 어떻게 보여줄지에 대한 정책을 가져올 때 호출한다.
+//
+// 에러코드:
+// BAD_REQUEST: Trip이 없거나 팁을 줄 수 없는 상태인 경우
+
+message UserGetTripTipPolicyParams {
+    string trip_id = 1;
+}
+
+message UserGetTripTipPolicyResult {
+    TipPolicy tip_policy = 1;
+}

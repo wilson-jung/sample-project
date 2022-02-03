@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 대리 운행료 명세서를 발급받고 싶을 때 호출합니다.
+//
+// 에러코드:
+// INVALID_EMAIL_FORMAT: 이메일 주소가 유효하지 않은 경우
+// BAD_REQUEST: 기타 서버 에러 (메시지를 그대로 노출하면 됨)
+
+message DriverRequestDaeriTaxDocIssuanceParams {
+    int32 operation_year = 1;
+    string email_address = 2;
+}
+
+message DriverRequestDaeriTaxDocIssuanceResult {
+}

@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetRideAvailabilityProto";
+
+// 설명:
+// 현재 설정하려는 출발지,도착지 정보 등에 대한 Ride 요청 가능 여부를 조회할때 호출한다.
+// 요청 가능하더라도 여러 품질 이슈가 있다면 해당 이슈에 대한 정보를 내려준다.
+//
+// 에러코드:
+// BAD_REQUEST: 요청한 위도,경도가 값이 올바르지 않은 경우
+
+message UserGetRideAvailabilityParams {
+    AddressedLocation origin = 1;
+    AddressedLocation destination = 2;
+    repeated AddressedLocation waypoints = 3;
+
+    // 대리에 대한 Availability인지의 여부.
+    // 대리를 지원하지 않는 버전에서는 null로 올려줄 경우 false로 인식하고, 그 외에는 모든 상품(실시간, 대리)에 대한 Availability가 내려간다.
+    BoolValue is_daeri = 4;
+}
+
+message UserGetRideAvailabilityResult {
+    // 현재 정보로 차량을 호출할 수 있는지 여부
+    bool isAvailable = 2;
+
+    // 호출 할 수 없는 경우, 혹은 호출 할 수 있더라도 서비스 품질 관련 이슈가 있는 경우 그 이유에 대해서 내려주는 필드
+    RideAvailabilityIssue issue = 3;
+}

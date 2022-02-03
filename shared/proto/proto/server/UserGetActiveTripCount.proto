@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetActiveTripCountProto";
+
+// 설명:
+// 라이더앱에서 활성화된 예약 서비스 갯수를 확인할 때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserGetActiveTripCountParams {
+}
+
+message UserGetActiveTripCountResult {
+    message Banner {
+        Image icon = 1;
+        string title = 2;
+        string description = 3;
+        StringValue deep_link = 4;
+    }
+    int32 activeTripCount = 1;
+    StringValue label = 2;
+}

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserCreateBusinessPaymentProfileProto";
+
+// 설명 :
+// 유저가 비즈 프로필을 등록할 때 사용한다.
+//
+// 에러 :
+// ? : activation code가 잘못되었을때...
+
+message UserCreateBusinessPaymentProfileParams {
+    string activationCode = 1;
+}
+
+// 응답 : 만들어진 비즈 프로필
+
+message UserCreateBusinessPaymentProfileResult {
+    PaymentProfileDTO paymentProfile = 1;
+}

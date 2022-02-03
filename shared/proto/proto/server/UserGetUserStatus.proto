@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+import "common.proto";
+import "ride.proto";
+import "ride_reservation.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetUserStatusProto";
+
+// 설명:
+// 라이더앱에서 현재 라이더 상태를 종합적으로 조회하기 위해 호출한다.
+// 보통 라이더앱이 Foreground로 올라올때마다 호출하거나 적절할떄 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserGetUserStatusParams {
+    Location location = 1;
+}
+
+message UserGetUserStatusResult {
+    message MenuItem {
+        string url = 1;
+        StringValue description = 2;
+    }
+    message SideMenuBanner {
+        string url = 1;
+        Image image = 2;
+        StringValue logKey = 3;
+    }
+    message HomeBanner {
+        string url = 1;
+        string title = 2;
+        StringValue logKey = 3;
+    }
+
+    UserDTO user = 1;
+    UserStatusDTO userStatus = 2;
+    RideDTO ride = 3;
+
+    // 이 필드가 있으면 클라이언트는 Braze SDK로 커스텀 이벤트를 발생시킨다.
+    // https://www.braze.com/docs/developer_guide/platform_integration_guides/android/analytics/tracking_custom_events/
+    // https://www.braze.com/docs/developer_guide/platform_integration_guides/ios/analytics/tracking_custom_events/
+    repeated BrazeEvent brazeEvents = 16;
+
+    // 사이드 메뉴 상단에 표시되는 배너 리스트
+    // 클라에서 이 이미지 리스트 주 랜덤하게 하나를 선택하여 보여준다.
+    repeated SideMenuBanner side_menu_banners = 18;
+
+    // 라이더 앱 3.0부터 홈 화면 상단에 보이는 배너 리스트
+    repeated HomeBanner home_banners = 19;
+
+    // 쿠폰 메뉴에 뉴뱃지를 띄워줄지 여부
+    bool coupon_new_badge = 17;
+
+    // 라이더 앱 3.0부터 메인화면에 노출되는 인사말
+    StringValue greeting_text = 20;
+
+    // 패스포트 멤버십에 가입된 유저인 경우 채워져서 내려간다.
+    StringValue passport_membership_id = 21;
+
+    // 패스포트 멤버십 갱신유예 여부
+    BoolValue is_passport_membership_deactivation_delaying = 22;
+
+    // 크레딧 잔액 총합
+    int32 total_credit_amount = 23;
+
+    // 대리가 사용 가능한지 여부
+    BoolValue is_daeri_available = 24;
+
+    // 유저의 호출예약 입니다.
+    // 2시간 이내로 수행될 예정인 임박한 호출 예약이 내려가며
+    // 앱에서 이를 grpc subscribe 해야 합니다.
+    RideReservationDTO upcoming_ride_reservation = 25;
+
+    // 대리 커밍순 팝업 문구.
+    StringValue daeri_coming_soon_popup_body = 1001;
+
+    // 현재 위치, 현재 시각에 바로대리 호출이 가능한지 여부
+    BoolValue is_baro_daeri_available = 1005 [deprecated = true];
+
+    // 친구 초대 메뉴
+    MenuItem invitation_menu = 1000;
+
+    // 서랍 차량 관리 메뉴
+    MenuItem user_vehicle_menu = 1002;
+
+    // 비즈니스 혜택 메뉴
+    MenuItem biz_benefit_menu = 1004;
+
+    // 패스포트 통합멤버십 메뉴
+    MenuItem passport_membership_menu = 1006;
+
+    // 차량 등록 화면 하단 배너
+    Image create_vehicle_lower_banner = 1003;
+
+    // 서랍 메뉴 > 프로필의 패스포트 결제내역 눌렀을 때 보낼 딥링크
+    StringValue passport_billing_history_deeplink = 1007;
+}

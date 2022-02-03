@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 라이더앱에서 호출 예약 건이 끝난 후 분실물을 찾기 위해 드라이버에게 전화한 경우 호출한다.
+//
+// 에러코드:
+// BAD_REQUEST: RideReservation이 없는 경우
+
+message UserLogCallDriverButtonClickOnRideReservationParams {
+    string ride_reservation_id = 1;
+}
+
+message UserLogCallDriverButtonClickOnRideReservationResult {
+}

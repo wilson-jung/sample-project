@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// [핸들모아] 입금이 지연된 내실돈의 리스트 조회
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+// 입금이 지연된 내실돈이 없으면 빈 리스트가 응답된다.
+
+message DriverListDelayedGigDriverPaymentsParams {
+}
+
+message DriverListDelayedGigDriverPaymentsResult {
+    repeated GigDriverPaymentDTO payments = 1;
+}

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "common.proto";
+import "timestamp.proto";
+
+package taxi.server.trip;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// [서버 -> 웹 전달용]
+// 사고 접수 폼에서 미리 채워줄 정보 전달
+message AccidentReportInitialData {
+    string ride_id = 1;
+
+    // 라이드가 이미 종료된 경우 종료 시각
+    // 아직 라이드 중이면 null
+    Timestamp ride_finished_at = 2;
+}
+
+// [웹 -> 클라이언트 전달용]
+// 사고 접수되었을 때
+message ReturnAccidentReportParams {
+    AccidentReportDTO accident_report = 1;
+}
+
+message ReturnAccidentReportResult {
+}

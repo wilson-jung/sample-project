@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "common.proto";
+import "mission.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverGetGigDriverStatusProto";
+
+// 설명:
+// 핸들모아 앱에서 현재 상태를 종합적으로 조회하기 위해 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverGetGigDriverStatusParams {
+}
+
+message DriverGetGigDriverStatusResult {
+    DriverDTO driver = 1;
+    GigDriverStatusDTO gig_driver_status = 2;
+    // 수행 중이거나 1:1 배정된 미션이 있을 때만 존재
+    DriverMissionDTO mission = 3;
+    // 현재 활성화된 1:1 배정권. 존재할 경우에만 내려감
+    MissionDispatchTicketDTO mission_dispatch_ticket = 4;
+    // 보유 중인 1:1 배정권 갯수
+    int32 remaining_mission_dispatch_ticket_count = 5;
+    bool daeri_dispatch_ticket_new_badge = 6;
+}

@@ -1,0 +1,248 @@
+syntax = "proto3";
+
+import "common.proto";
+import "ride.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserListRideEstimationsProto";
+
+// 설명:
+// 배차 요청에 대한 정보와 예측값을 조회하고자 할때 사용된다.
+// 기존에 있던 UserListRideTypes.proto와 UserEstimateRide.proto에 존재하는 deprecated를 삭제하고 통합하여 사용합니다
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+// BAD_REQUEST: 위도,경도가 잘못 된 경우, 알수 없는 RideType을 올려준 경우
+// UNAVAILABLE_ORIGIN: 서비스 지역이 아닌 출발지인 경우
+// UNAVALIABLE_DESTINATION: 서비스 지역이 아닌 도착지인 경우
+
+message UserListRideEstimationsParams {
+    AddressedLocation origin = 1;
+    AddressedLocation destination = 2;
+
+    // 사용자가 선택한 쿠폰을 올려준다.
+    StringValue coupon_id = 3;
+
+    // 크레딧 사용 여부
+    BoolValue uses_credit = 12;
+
+    // 결제 수단 ID
+    // 결제 프로필이 있을 때 같이 올리면, 현재 결제 프로필에 붙은 결제 수단과 다른 경우 오류가 발생한다.
+    StringValue payment_method_id = 4;
+
+    // 결제 프로필 ID
+    StringValue payment_profile_id = 5;
+
+    // 예측하고자 하는 라이드 타입 리스트. RideType 혹은 RideTypeGroup 값이 올 수 있다.
+    // 빈 리스트로 올라오면 적절히 전체 RideType과 RideTypeGroup에 대한 예측 결과가 내려간다.
+    repeated string ride_types = 7;
+
+    // 경유지 정보를 담은 리스트
+    repeated AddressedLocation waypoints = 9;
+
+    // 대리 서비스 종료로 null을 넣으면 된다.
+    BoolValue is_daeri = 10 [deprecated=true];
+
+    // 대리에 사용될 차량 id
+    StringValue user_vehicle_id = 11 [deprecated=true];
+}
+
+message UserListRideEstimationsResult {
+    message Estimation {
+        message RideType {
+            // 라이드 타입.
+            // LITE, PREMIUM, NEAR_TAXI(가까운 타다), RIDE_RESERVATION (호출예약) 등의 값이 올 수 있다.
+            string value = 1;
+
+            // 화면에 보여줄 차량 이미지
+            Image image = 2;
+
+            // 서비스 이름
+            string name = 3;
+
+            // 좌석 숫자
+            int32 seats = 4;
+
+            // 라벨 이름
+            StringValue status_label = 10;
+
+            // 호출뷰에서 현재 Estimation을 선택했을 때 액션 버튼에 보여지는 텍스트 문구
+            // RIDE_RESERVATION (호출예약)의 경우만 값이 내려가며, 나머지 경우는 내려가지 않고 클라이언트에서 적절히 name 필드를 사용해서 보여준다.
+            StringValue action_button_text = 20;
+        }
+
+        message SurgeInfo {
+            // surge 조건에 부합할 경우 내려가는 팝업 문구
+            string popup_title = 1;
+            string popup_body = 2;
+        }
+
+        message Notice {
+            Image image = 1;
+            StringValue title = 2;
+            string body = 3;
+
+            // 클라이언트는 특정 ID로 된 notice를 이미 보여준 경우 다시 보여주지 않아야 합니다.
+            // FIXME: 팝업을 계속 띄우지 않으려면 필요?
+            string id = 4;
+        }
+
+        message NoticeAfterClick {
+            Image image = 1;
+            StringValue title = 2;
+            string body = 3;
+        }
+
+        message RideAvailability {
+            // 호출 가능한지 여부
+            bool is_available = 1;
+
+            // 호출 할 수 없는 경우, 혹은 호출 할 수 있더라도 서비스 품질 관련 이슈가 있는 경우 그 이유에 대해서 내려주는 필드
+            // 호출 버튼을 누를 때 이것을 보고 팝업을 띄워주면 된다.
+            RideAvailabilityIssue issue = 2;
+        }
+
+        message BaroDaeriInfo {
+            message Popup {
+                Image image = 1;
+                string title = 2;
+                string body = 3;
+            }
+
+            // 바로대리 호출 가능한지 여부
+            bool is_available = 1;
+            // 바로대리 설명
+            string description = 2;
+            // 설명을 눌렀을 때 나오는 바로대리 안내 팝업
+            Popup popup = 3;
+            // 바로대리 호출 가능할 때 호출 버튼에 보여줄 문구
+            // (예: 15분 만에 오는 바로대리 호출)
+            StringValue request_button_text = 4;
+        }
+
+        message PassportMembershipDescription {
+            // 패스포트 멤버십 프로모션 관련 문구가 들어오는 필드
+            // ex) 2% 적립, 가입 시 5% 적립
+            string benefit_description = 1;
+
+            // 프로모션 문구가 타다 패스포트 색이어야 하는지 여부
+            bool should_highlight = 2;
+        }
+
+        message RideReservationInfo {
+            // 호출예약 예약하기 웹뷰 url
+            string reservation_page_url = 1;
+        }
+
+        RideType ride_type = 1;
+
+        // 예상 정보
+        RideEstimation estimation = 2;
+
+        // RideRoute에 대한 예측값.
+        // 가까운 타다 출시 이후 버전(3.2.0 이상)에서는 RideRoute 예측값이 필요할 때 route_estimation을 사용한다.
+        // 가까운 타다 출시 이전 버전(3.2.0 미만)에서는 RideRoute 예측값이 필요할 때 estimation을 사용한다.
+        RideRoute route_estimation = 10;
+
+        // RequestRide 할 때 이 값을 함께 올려줘야한다.
+        // (RideEstimationToken 혹은 NearRideEstimationToken이다)
+        StringValue estimation_token = 3;
+
+        // 예상 요금 이후 단계로 넘어갈 때 뷰 로깅에 이 값을 달아줘야 한다.
+        StringValue estimation_uuid = 9;
+
+        // Estimation이 없는 이유 (미지원 출도착지)
+        StringValue estimation_unavailable_issue = 4;
+
+        // 탄력요금제 정보가 있는 경우 값이 내려간다.
+        SurgeInfo surge_info = 5;
+
+        // 상품이 선택된 직후에 보여줄 팝업이 있으면 내려주는 필드
+        Notice notice = 6;
+
+        // 상품을 호출했을 때 보여줄 팝업
+        NoticeAfterClick notice_after_click = 15;
+
+        // 쿠폰 ID가 올라오지 않았거나, 쿠폰 ID가 올라왔지만 적용할 수 없는 경우 false이다.
+        // 클라이언트에서는 쿠폰 ID를 올렸지만 false인 경우 UI에서 쿠폰 적용을 해제해야 한다.
+        bool is_coupon_applied = 7;
+
+        RideAvailability ride_availability = 8;
+
+        // 클라이언트 호환성을 위해 남겨둠 (https://github.com/VCNC/tada-server/pull/5841/files#r520233486)
+        // 항상 NOW로 내려간다.
+        enum RideRequestType {
+            option (client_deprecated_enum) = true;
+            NOW = 0;
+        };
+        RideRequestType ride_request_type = 13 [(client_deprecated_field) = true];
+
+        // 대리에 대한 Estimation인지의 여부.
+        BoolValue is_daeri = 14;
+
+        // 예상요금 타입명 아래에 상품에 대한 설명이 들어오는 필드
+        // 필요에 따라 특수한 정보를 전달해주는 용도로 사용될 수 있다. (e.g. 이벤트 진행, 주변차 넛지 등)
+        string headline = 16;
+
+        // 헤드라인에 하이라이트 효과가 들어가야되는지 여부
+        bool should_headline_highlighted = 17;
+
+        // 바로대리 관련 정보
+        BaroDaeriInfo baro_daeri_info = 18 [deprecated = true];
+
+        // 패스포트 멤버십 문구 관련 정보
+        // 기존 headline과 passport_membership_description 둘 다 값이 내려옵니다.
+        // passport_membership_description을 사용할 수 있으면 사용하고
+        // 아니라면 기존 headline을 사용해야 합니다.
+        PassportMembershipDescription passport_membership_description = 19;
+
+        RideReservationInfo ride_reservation_info = 20;
+    }
+
+    repeated Estimation ride_estimations = 1;
+
+    // 라이드 타입. null 값 또는 ride_estimations 중의 index 번째를 선택(0부터 시작) null 이면 아무 것도 선택하지 않는다
+    Int32Value selected_index = 2;
+
+    // 대리 부르기 화면 차량 프로모션 문구
+    StringValue daeri_estimate_ride_promotion_text = 3 [deprecated = true];
+
+    message DaeriRequestRidePromotionPopup {
+        string url = 1;
+        Image image = 2;
+        string title = 3;
+        string body = 4;
+    }
+
+    // 대리기사 호출하기 프로모션 팝업
+    DaeriRequestRidePromotionPopup daeri_request_ride_promotion_popup = 4 [deprecated = true];
+
+    // 크레딧 사용이 적용된 경우 true로 내려간다.
+    BoolValue is_credit_applied = 5;
+
+    message PassportMembershipNudge {
+        // 넛지 문구 ex) 패스포트 가입하고 [b]바로 7만원 혜택받기! >[/b]
+        string description = 1;
+        string url = 2;
+        string log_key = 3;
+    }
+
+    // 패스포트 넛지 관련 정보
+    // 넛지 정보가 내려오면 호출뷰 패스포트 넛지 처리를 해주어야 합니다.
+    PassportMembershipNudge passport_membership_nudge = 6;
+
+    message EstimatedRoute {
+        message RouteUnit {
+            repeated Location points = 1;
+        }
+
+        repeated RouteUnit route_units = 1;
+    }
+
+    // 예상 경로 관련 정보
+    EstimatedRoute estimated_route = 7;
+}

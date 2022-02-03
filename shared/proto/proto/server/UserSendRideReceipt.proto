@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserSendRideReceiptProto";
+
+// 설명:
+// 라이더앱에서 라이드의 영수증을 다시 전송하고 싶을 때 사용
+//
+// 에러코드:
+// BAD_REQUEST: Ride가 없는 경우
+// BAD_REQUEST: 기타 서버 에러 (메시지를 그대로 노출하면 됨)
+
+message UserSendRideReceiptParams {
+    string rideId = 1;
+}
+
+message UserSendRideReceiptResult {
+}

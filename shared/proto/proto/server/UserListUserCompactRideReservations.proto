@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+import "ride_reservation.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserListUserCompactRideReservationsProto";
+
+// 설명:
+// 라이더 앱에서 이용 예정 내역을 조회할때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserListUserCompactRideReservationsParams {
+    StringValue next_token = 1;
+    Int32Value limit = 2;
+}
+
+message UserListUserCompactRideReservationsResult {
+    repeated UserCompactRideReservationDTO ride_reservations = 1;
+    StringValue next_token = 2;
+}

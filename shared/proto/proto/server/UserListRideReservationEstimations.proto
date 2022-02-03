@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+import "common.proto";
+import "timestamp.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 타다 호출 예약하기 뷰에서 선택한 탑승 예정 시각에 대해 예상 요금을 보여주기 위해 사용한다.
+// 탑승 예정 시각을 삭제할 때는 이 API를 호출하지 않아도 괜찮다.
+// 탑승 예정 시각을 추가할 때는 아래와 같은 params로 이 API를 호출해야 한다.
+// - expected_pick_up_at_list: 기존 것들과 새로 추가되는 것을 모두 포함한 탑승 예정 시각 목록
+// - new_expected_pick_up_at: 새로 추가되는 탑승 예정 시각
+//
+// 에러 코드:
+// BAD_REQUEST - origin, destination이 null이거나 잘못된 ride_type일 경우, 탑승 예정 시각이 정책에 맞지 않을 경우
+// 그 외 - 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserListRideReservationEstimationsParams {
+    AddressedLocation origin = 1; // non-null
+    AddressedLocation destination = 2; // non-null
+    string ride_type = 3;
+    repeated Timestamp expected_pick_up_at_list = 4;
+    Timestamp new_expected_pick_up_at = 5;
+    StringValue estimation_token = 6; // 최초 호출 시에는 비워서 호출하고, 이후부터는 가장 마지막에 내려준 값을 그대로 올려준다.
+}
+
+message UserListRideReservationEstimationsResult {
+    message RideReservationEstimation {
+        Timestamp expected_pick_up_at = 1;
+        int32 cost = 2;
+        StringValue surge_multiplier = 3;
+    }
+
+    repeated RideReservationEstimation estimations = 1;
+    string estimation_token = 2;
+}

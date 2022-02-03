@@ -1,0 +1,380 @@
+syntax = "proto3";
+
+import "common.proto";
+import "timestamp.proto";
+import "wrappers.proto";
+
+package taxi;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol";
+option java_outer_classname = "TripProto";
+
+message TripCancellationCause {
+    enum Value {
+        UNSPECIFIED = 0;
+        DRIVER_CANCELLED = 1;
+        RIDER_CANCELLED = 2;
+    }
+    Value value = 1;
+}
+
+message TripTypeDescription {
+    enum TripType {
+        UNSPECIFIED = 0;
+        AIR = 1;
+        CHARTER = 2;
+        VAN = 3 [deprecated = true];
+    }
+
+    // Trip 타입. 앞으로 AIR, CHARTER 등의 값이 올 수 있다.
+    TripType value = 1;
+
+    // 화면에 보여줄 사람이 알아볼 수 있는 값들
+    string name = 2;
+}
+
+message TripReceipt {
+    message LineItem {
+        string name = 1;
+        int32 amountKRW = 2;
+    }
+    repeated LineItem lineItems = 1;
+
+    // 유저에게만 내려감. lineItems의 amountKRW의 합과 일치하지 않을 수 있다!
+    Int32Value totalPriceKRW = 2;
+
+    // 프리미엄 개인 기사에게만 내려감. basicFee discount (시간 할인) 이 적용된 이후의 금액이다.
+    Int32Value driver_profit_KRW = 3;
+
+    // 프리미엄 개인 기사에게만 내려감. 취소 수수료 관련 설명이다.
+    StringValue cancellation_fee_description = 4 [deprecated = true];
+}
+
+message TripReceiptPrefilledEntry {
+    enum Type {
+        UNSPECIFIED = 0;
+        PARKING = 1;
+        TOLL = 2;
+    }
+    Type type = 1;
+    int32 amountKRW = 2;
+}
+
+// 현재 Trip이 완료된 후, 주행에 대한 정보를 담고 있는 객체.
+message TripRoute {
+    int32 durationSeconds = 1;
+    int32 distanceMeters = 2;
+}
+
+message TripDTO {
+    enum TripRideStatus {
+        UNSPECIFIED = 0;
+        PENDING = 1;
+        ACCEPTED = 2;
+        ARRIVED = 3;
+        PICKED_UP = 4;
+        DROPPED_OFF = 5;
+        CANCELED = 6;
+    }
+
+    message DetailItem {
+        string key = 2;
+        string value = 3;
+    }
+
+    string id = 1;
+
+    TripTypeDescription typeDescription = 2;
+
+    // 현재 Ride의 상태에 따라 설정된다.
+    TripRideStatus tripRideStatus = 3;
+
+    // version이 클수록 이 Ride에 대한 최신 정보를 담고 있다.
+    int64 version = 4;
+
+    // sequenceNumber가 클수록 더 나중에 생긴 Trip이다.
+    int64 sequenceNumber = 5;
+
+    // 추가 정보 리스트
+    repeated DetailItem detailItems = 6;
+
+    // 요청 사항
+    StringValue comment = 7;
+
+    // 요청 사항
+    StringValue waypoint = 8;
+
+    // 라이더가 요청한 출발 지점
+    AddressedLocation origin = 10;
+
+    // 라이더가 요청한 출발 지점의 상세 (EX.101동 지하주차장).
+    StringValue originDetails = 11;
+
+    // 실제 라이더가 픽업된 지점. PICKED_UP 상태 이후부터 설정된다.
+    AddressedLocation pickup = 12;
+
+    // 라이더가 요청한 도착 지점.
+    AddressedLocation destination = 13;
+
+    // 라이더가 요청한 도착 지점의 상세 (EX.101동 지하주차장).
+    StringValue destinationDetails = 14;
+
+    // 실제 라이더가 내린 지점. DROPPED_OFF 상태 이후에 설정된다.
+    AddressedLocation dropoff = 15;
+
+    // 취소에 대한 정보를 담고 있으며, Trip이 취소된 경우에 설졍된다.
+    TripCancellationCause cancellationCause = 16;
+
+    // Ride를 호출한 유저에 대한 정보
+    UserDTO rider = 20;
+
+    // Trip에 배차된 드라이버의 정보. Trip이 드라이버에 의해 Accept 된 경우에만 설정된다.
+    DriverDTO driver = 22;
+
+    // 라이더의 휴대폰 전화번호.
+    // 라이더의 개인정보 보호를 위해 드라이버 앱에서 라이더와의 통화기록을 삭제할 때 사용된다.
+    StringValue riderRealPhoneNumber = 21;
+
+    // 드라이버가 배차를 수락한 시각.
+    // ACCEPTED 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp acceptedAt = 30;
+
+    // 드라이버가 픽업 장소에 도착한 시각.
+    // ARRIVED 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp arrivedAt = 31;
+
+    // 라이더를 픽업할 시각.
+    Timestamp pickUpScheduledAt = 32;
+
+    // 라이더가 픽업된 시각.
+    // PICKED_UP 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp pickedUpAt = 33;
+
+    // 라이더가 내린 시각.
+    // DROPPED_OFF 상태가 된적이 있는 경우에만 이 필드가 설정된다.
+    Timestamp droppedOffAt = 34;
+
+    // 목적지 부근을 최초로 지난 시각.
+    Timestamp approachingDestinationSince = 35;
+
+    // 출발지 부근을 떠난 지난 시각.
+    Timestamp leavingOriginSince = 36;
+
+    // 차량이 승객을 태우고 이동한 경로에 대한 정보.
+    // DROPPED_OFF 상태인 경우에만 이 필드가 채워진다.
+    TripRoute route = 40;
+
+    // 영수증 정보
+    TripReceipt receipt = 41;
+
+    // 고객에게 과금할 추가요금 미리 입력 정보
+    repeated TripReceiptPrefilledEntry receiptPrefilledEntries = 46;
+
+    // 사용자가 라이드를 결제할/결제한 결제 수단에 대한 정보 (미수금 처리시 초기 선택과 달라질 수 있음)
+    // 라이더에게만 내려감
+    PaymentMethodDTO payment_method = 42;
+
+    // 결제 프로필 정보
+    // 라이더에게만 내려감
+    PaymentProfileDTO payment_profile = 43;
+
+    // 거리 상한 정보
+    // 프리미엄 개인에게만 내려간다
+    Int32Value km = 44;
+
+    // 취소 관련 정보(ex. "예약 취소됨")
+    // 드라이버에게만 내려간다
+    StringValue cancel_description = 45;
+}
+
+message TripVehicle {
+    enum TripVehicleType {
+        CARNIVAL = 0;
+        SPRINTER = 1;
+        SOLATI = 2;
+        SEDAN = 3;
+    }
+    TripVehicleType type = 1;
+    string brand = 2;
+    string model = 3;
+    string public_name = 4;
+    Image image = 5;
+    // 설명 슬라이드용 이미지
+    repeated Image slide_images = 6;
+    int32 seats = 7;
+}
+
+enum TripAirType {
+    SENDING = 0;
+    PICK_UP = 1;
+}
+
+message TripAddressedLocation {
+    AddressedLocation location = 1;
+    StringValue details = 2;
+}
+
+message TripLuggage {
+    // 특수 수하물
+    int32 large = 1;
+    // 대형 수하물
+    int32 medium = 2;
+    // 일반 수하물
+    int32 small = 3;
+    // 소형 수하물
+    int32 tiny = 4;
+}
+
+message TripEstimation {
+    enum TripBasicFeeDiscountType {
+        UNSPECIFIED = 0;
+        DATE_TIME = 1;
+        EMPLOYEE = 2;
+        AIR_DEAL = 3;
+        EARLY_BIRD = 4;
+        MEMBERSHIP = 5;
+    }
+    int32 basic_fee = 1;
+    int32 basic_fee_discount = 2;
+    TripBasicFeeDiscountType basic_fee_discount_type = 3;
+    int32 coupon_discount = 4;
+    int32 total_fee = 5;
+    int32 biz_discount = 6;
+    // "1.23%" 형태의 문자열
+    StringValue biz_discount_percentage = 7;
+}
+
+message TripRider {
+    string name = 1;
+    string phone_number = 2;
+}
+
+enum TripAvailableDatetimeType {
+    DAYS_IN_MONTH = 0;
+    HOURS_IN_DAY = 1;
+    TEN_MINUTES_IN_HOUR = 2;
+    ALL_DAYS = 3;
+    RIDE_FLUX_TO_JUNGMUN = 4;
+    RIDE_FLUX_TO_CJU_AIRPORT = 5;
+}
+
+message TripAvailableDatetime {
+    bool is_available = 1;
+    Timestamp datetime = 2;
+    int32 price_rate = 3;
+    Timestamp drop_off_at = 4;
+}
+
+message TripReservation {
+    enum TripReservationStatus {
+        PENDING = 0;
+        CONFIRMED = 1;
+        COMPLETED = 2;
+        CANCELLED = 3;
+    }
+
+    message LineItem {
+        string name = 1;
+        string value = 2;
+    }
+
+    message Payment {
+        PaymentMethodDTO method = 1;
+        PaymentProfileDTO profile = 2;
+    }
+
+    string id = 1;
+    string name = 2; // 상세 뷰에서 사용합니다.
+    string short_name = 7; // 리스트 뷰에서 사용합니다.
+    TripTypeDescription.TripType type = 3;
+    TripReservationStatus status = 4;
+    TripDTO.TripRideStatus ride_status = 5;
+    Timestamp pick_up_at = 6;
+    TripVehicle vehicle = 8;
+
+    TripAddressedLocation origin = 10;
+    repeated TripAddressedLocation waypoints = 11;
+    TripAddressedLocation destination = 12;
+
+    StringValue driver_name = 20;
+    repeated LineItem driver_information = 21;
+    Int32Value review_rating = 22;
+    repeated LineItem rider_information = 23;
+    repeated LineItem reservation_information = 24;
+    StringValue comment = 25;
+    StringValue designated_driver_comment = 26;
+
+    StringValue biz_reason = 30;
+    Payment payment = 31;
+    TripReceipt receipt = 32;
+    Payment additional_payment = 33;
+    TripReceipt additional_receipt = 34;
+    Payment refund_payment = 35;
+    TripReceipt refund_receipt = 36;
+    Payment tip_payment = 37;
+    TripReceipt tip_receipt = 38;
+    Payment previous_payment = 53;
+    TripReceipt previous_receipt = 54;
+
+    int32 km = 49;
+    int32 fee_per_km = 40;
+    Int32Value minute = 41;
+    Int32Value fee_per_hour = 42;
+    string additional_fee_description = 43;
+
+    bool has_air_pick_up_nudge = 50;
+    bool need_review = 51;
+    bool editable = 52;
+    bool is_b2b = 55;
+}
+
+message TripProduct {
+    message RideFluxDescription {
+        message Schedule {
+            string subheading = 1;
+            repeated string times = 2;
+        }
+        message Faq {
+            string title = 1;
+            string body = 2;
+        }
+        string header = 1;
+        string location_subheading = 2;
+        repeated string location_descriptions = 3;
+        string stops_subheading = 4;
+        repeated string stops_descriptions = 5;
+        string fee_subheading = 6;
+        string fee_discount_reason = 7;
+        string schedules_subheading = 8;
+        repeated string schedules_descriptions = 9;
+        repeated Schedule schedules= 10;
+        string faq_subheading = 11;
+        repeated Faq faqs = 12;
+        string schedules_notice = 13;
+    }
+
+    message LineItem {
+        string key = 1;
+        string value = 2;
+    }
+    message LuggageDescription {
+        string small = 1;
+        string medium = 2;
+        string large = 3;
+    }
+
+    Image image = 1;
+    TripVehicle vehicle = 2;
+    Int32Value hour_unit = 3;
+    int32 waypoint_count = 4;
+    int32 min_cost = 5;
+    Int32Value original_min_cost = 6;
+
+    repeated LineItem product_notices = 10;
+    repeated string reservation_notices = 11;
+    repeated string fee_notices = 12;
+    string additional_fee_description = 13;
+    LuggageDescription luggage_description = 14;
+    RideFluxDescription ride_flux_description = 15;
+}

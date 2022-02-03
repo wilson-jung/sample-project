@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "membership.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserUpdatePaymentMethodOfUserMembershipProto";
+
+// 설명 :
+// 유저가 패스포트 구독의 payment method를 변경하고 싶을 때 라이더 앱에서 호출된댜.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+// BAD_REQUEST: 해당 구독이 존재하지 않는 경우
+// BAD_REQUEST: 결제 수단이 존재하지 않는 경우
+// BAD_REQUEST: 해지된 구독인 경우
+// BAD_REQUEST: 결제가 진행 중인 경우
+// HAS_FAILED_PAYMENT: 결제 수단에 미수금이 있는 경우
+
+message UserUpdatePaymentMethodOfUserMembershipParams {
+    string membership_id = 1;
+    string payment_method_id = 2;
+}
+
+message UserUpdatePaymentMethodOfUserMembershipResult {
+    UserMembershipDTO membership = 1;
+}

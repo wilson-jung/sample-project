@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetRideCatalogueProto";
+
+// 설명:
+// 실시간 상품의 상세 정보를 전달합니다.
+//
+// 에러코드:
+// 에러코드가 없습니다.
+
+message UserGetRideCatalogueParams {
+    // UserListRideEstimations.proto안에서 Estimation, RideType의 value를 사용합니다.
+    // LITE, PREMIUM, NEAR_TAXI(가까운 타다), RIDE_RESERVATION (호출예약) 등의 값이 올 수 있다.
+    string ride_type = 1;
+    Location location = 2;
+
+    Int32Value call_fee = 3;
+}
+
+message UserGetRideCatalogueResult {
+    message LineItem {
+        string title = 1;
+        string content = 2;
+        StringValue detail = 3;
+    }
+    message Banner {
+        string url = 1;
+        Image image = 2;
+        string log_key = 3;
+    }
+
+    string ride_type = 1;
+    Image image = 2;
+    string name = 3;
+    string description = 4;
+    repeated LineItem lines = 5;
+    Banner banner = 6;
+}

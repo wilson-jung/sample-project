@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetPaymentProto";
+
+// 설명:
+// 해당 payment를 조회하고 싶을 때 라이더앱에서 호출한다.
+//
+// 에러코드:
+// BAD_REQUEST : 유저에 해당하지 않는 payment를 조회하는 경우
+
+message UserGetPaymentParams {
+    string paymentId = 1;
+}
+
+// 응답 : 해당하는 paymentDTO
+
+message UserGetPaymentResult {
+    PaymentDTO payment = 1;
+    // PaymentDTO의 Status가 FAILED일 때 PG Error message를 받은 경우에 내려간다.
+    // pg Error를 받을 수 없거나, 알 수 없는 경우 "알수없음"이 내려가고, 클라에서는 이를 그대로 보여주면 된다.
+    StringValue pgErrorMessage = 2;
+}

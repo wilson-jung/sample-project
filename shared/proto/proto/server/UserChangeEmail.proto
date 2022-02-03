@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserChangeEmailProto";
+
+// 설명 :
+// 사용자가 이메일을 변경할 때 라이더 앱에서 호출한다.
+//
+// 에러 :
+// INVALID_EMAIL_FORMAT : 이메일의 형식이 올바르지 않은 경우
+// EMAIL_ALREADY_EXISTS : 이미 가입된 이메일인 경우
+
+message UserChangeEmailParams {
+    string email = 1;
+}
+
+// 응답 : 변경된 user
+
+message UserChangeEmailResult {
+    UserDTO user = 1;
+}

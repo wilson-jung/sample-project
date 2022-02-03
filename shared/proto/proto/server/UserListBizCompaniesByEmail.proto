@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserListBizCompaniesByEmailProto";
+
+// 설명:
+// 해당 이메일을 소유할 수 있는 타다 비즈니스 가입 업체 리스트를 조회한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserListBizCompaniesByEmailParams {
+    string email = 1;
+}
+
+message UserListBizCompaniesByEmailResult {
+    message BizCompany {
+        string id = 1;
+        string name = 2;
+        StringValue employee_name = 3; // 없으면 입력 받아야 함
+    }
+    repeated BizCompany biz_companies = 1;
+}

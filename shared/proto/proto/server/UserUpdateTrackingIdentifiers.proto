@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 라이더의 각종 식별자를 업데이트합니다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserUpdateTrackingIdentifiersParams {
+    TrackingIdentifiers tracking_identifiers = 1;
+}
+
+message UserUpdateTrackingIdentifiersResult {
+}

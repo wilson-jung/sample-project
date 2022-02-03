@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "ride_reservation.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 라이더가 예약호출을 취소하는 경우 호출한다.
+// 만약 예약호출이 이미 취소된 경우 그냥 성공한 것처럼 처리된다. (멱등성 원칙)
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 ride_reservation_id에 해당하는 예약호출이 존재하지 않을때
+// BAD_REQUEST: 예약호출이 취소할 수 없는 상태일 때 (e.g. STARTED)
+
+message UserCancelRideReservationParams {
+    string ride_reservation_id = 1;
+    string cancel_ride_reservation_token = 2;
+}
+
+message UserCancelRideReservationResult {
+    RideReservationDTO ride_reservation = 1;
+    StringValue popup_title = 2;
+    StringValue popup_body = 3;
+}

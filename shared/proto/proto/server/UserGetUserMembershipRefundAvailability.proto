@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetUserMembershipRefundAvailabilityProto";
+
+// 설명 :
+// 유저가 멤버십을 환불하기 전 환불 가능 여부를 보여주기 위해 라이더 앱에서 호출된다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+// BAD_REQUEST: 해당 구독이 존재하지 않는 경우
+
+message UserGetUserMembershipRefundAvailabilityParams {
+    string membership_id = 1;
+}
+
+message UserGetUserMembershipRefundAvailabilityResult {
+    bool refund_available = 1;
+}

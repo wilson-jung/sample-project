@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package taxi.server;
+
+import "ride.proto";
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// [드라이버 앱] 하차 발생 삭제 API
+//
+// 에러코드:
+// 공통 에러 코드만 내려간다.
+
+message DriverDeleteRideStopoverParams {
+    string ride_id = 1;
+    int64 stopover_created_at = 2; // 삭제하려는 Stopover.created_at을 담아서 올리면 된다.
+}
+
+message DriverDeleteRideStopoverResult {
+    RideDTO ride = 1;
+}

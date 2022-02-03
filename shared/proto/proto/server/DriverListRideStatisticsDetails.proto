@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "ride_statistics.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverListRideStatisticsDetailsProto";
+
+// 설명:
+// 드라이버앱에서 배차 거절 / 미수락을 포함한 운행 이력을 조회할때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListRideStatisticsDetailsParams {
+    // 특정 날짜의 ride dispatches 를 조회하고자 하는 경우 YYYY-MM-DD 형태로 넣어준다.
+    StringValue date = 1;
+}
+
+message DriverListRideStatisticsDetailsResult {
+    repeated RideStatisticsDetailDTO details = 1;
+}

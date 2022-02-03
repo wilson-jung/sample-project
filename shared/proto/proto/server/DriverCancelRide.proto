@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "ride.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverCancelRideProto";
+
+// 설명:
+// 드라이버가 라이드를 취소하는 경우 드라이버앱에서 호출한다.
+// 만약 이미 취소한 경우라면 그냥 성공한 것처럼 처리된다. (멱등성 원칙)
+// 손님을 잘못태운 경우는 유저에게 과금되지 않는다.
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 RideId에 해당하는 라이드가 존재하지 않을때
+// BAD_REQUEST: 드라이버에게 할당된 Ride가 아닐때
+// BAD_REQUEST: Cancel 할 수 있는 상태가 아닐때
+
+message DriverCancelRideParams {
+    string rideId = 1;
+
+    // Reason에 대한 타입. 로깅해서 분석을 하는 용도로 사용됩니다.
+    RideCancellationReasonType.Driver.Value reasonType = 2;
+
+    // ReasonType이 CUSTOM이 아닐때도 각 Type에 맞는 문자열을 담아서 올려줘야합니다.
+    string reason = 3;
+
+    // 라이드를 취소할 때 확인이 필요한 경우 확인했다는 표시.
+    BoolValue confirmed = 4;
+}
+
+message DriverCancelRideResult {
+    RideDTO ride = 1;
+}

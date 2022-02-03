@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+import "ride_reservation.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 드라이버가 PENDING중인 예약호출 목록을 조회할 때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListPendingRideReservationsParams {
+    Int32Value limit = 1;
+
+    // 다음 페이지를 볼 때 올려준다.
+    StringValue next_token = 2;
+}
+
+message DriverListPendingRideReservationsResult {
+    repeated RideReservationDTO pending_ride_reservations = 1;
+    StringValue next_token = 2;
+}

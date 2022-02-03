@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "ride.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserListRidesProto";
+
+// 설명:
+// 레거시 코드 - 과거 라이더앱에서 탑승 내역을 조회할때 호출되었다.
+// 클라이언트는 탑승 내역을 조회할 때 이제 UserListUserCompactRides.proto 프로토콜을 사용해야 한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+option deprecated = true;
+
+message UserListRidesParams {
+    StringValue nextToken = 1;
+    Int32Value limit = 2;
+}
+
+message UserListRidesResult {
+    repeated RideDTO rides = 1;
+    StringValue nextToken = 2;
+}

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "trip.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverListScheduledTripsProto";
+
+// 설명:
+// 클라이언트는 앞으로 진행 혹은 진행 중인 Trip을 조회할 때 사용한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListScheduledTripsParams {
+    StringValue nextToken = 1;
+    Int32Value limit = 2;
+}
+
+message DriverListScheduledTripsResult {
+    repeated TripDTO trips = 1;
+    StringValue nextToken = 2;
+}

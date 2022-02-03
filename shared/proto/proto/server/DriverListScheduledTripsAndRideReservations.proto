@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "trip.proto";
+import "ride_reservation.proto";
+import "timestamp.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 예약콜 목록 -> 내 예약 화면의 예약된 RideReservation 정보 및 운행 상세 화면과 Trip을 조회할 때 사용한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListScheduledTripsAndRideReservationsParams {
+}
+
+message DriverListScheduledTripsAndRideReservationsResult {
+    message Entry {
+        // 둘 중 하나만 null이 아니어야한다.
+        RideReservationDTO ride_reservation = 1;
+        TripDTO trip = 2;
+    }
+
+    repeated Entry entries = 1;
+}

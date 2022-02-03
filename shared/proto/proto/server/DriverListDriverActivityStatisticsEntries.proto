@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverListRideStatisticsEntriesProto";
+
+// 설명:
+// 드라이버앱에서 운행 이력을 조회할때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListDriverActivityStatisticsEntriesParams {
+    DriverActivityStatisticsEntryDTO.PeriodType period_type = 1;
+    Int32Value limit = 2;
+}
+
+message DriverListDriverActivityStatisticsEntriesResult {
+    repeated DriverActivityStatisticsEntryDTO entries = 1;
+    repeated string comments = 2;
+}

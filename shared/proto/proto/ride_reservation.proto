@@ -1,0 +1,170 @@
+syntax = "proto3";
+
+import "common.proto";
+import "timestamp.proto";
+import "ride.proto";
+import "wrappers.proto";
+
+package taxi;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol";
+
+message RideReservationDTO {
+    enum Status {
+        UNSPECIFIED = 0;
+        PENDING = 1;
+        ACCEPTED = 2;
+        PRESTARTED = 3;
+        STARTED = 4;
+        CANCELED = 5;
+    }
+
+    message CancellationCause {
+        enum Value {
+            UNSPECIFIED = 0;
+            DISPATCH_TIMEOUT = 1;
+            RIDER_CANCELLED = 2;
+            // 드라이버가 accept_expiry를 넘겨서 취소한 경우
+            DRIVER_CANCEL_AFTER_EXPIRY = 3;
+            // 임박한 호출예약 건이 있는데 실시간 라이드를 호출한 경우
+            RIDER_REQUESTED_RIDE = 4;
+            // 드라이버가 예약 수행을 시작할 수 있는 시각까지 라이더가 라이드를 탑승 중인 경우
+            RIDER_HAS_ACTIVE_RIDE = 5;
+            // 어드민에서 호출예약을 취소한 경우
+            ADMIN_CANCELLED = 6;
+        }
+        Value value = 1;
+    }
+
+    message RideReservationEstimatedRoute {
+        int32 duration_seconds = 1;
+        int32 distance_meters = 2;
+    }
+
+    string id = 1;
+    RideTypeDescription ride_type_description = 2;
+    string ride_type = 22;
+    Status status = 3;
+    Timestamp expected_pick_up_at = 4;
+    AddressedLocation origin = 5;
+    AddressedLocation destination = 6;
+    RidePaymentMethodDTO payment_method = 7;
+    RidePaymentProfileDTO payment_profile = 8;
+    RideReservationReceiptDTO receipt = 9;
+    RideReservationEstimatedRoute estimated_route = 10;
+    string group_id = 11;
+    Timestamp accept_expiry = 12;
+
+    Timestamp created_at = 20;
+    Timestamp accepted_at = 23;
+    Timestamp prestarted_at = 24;
+    Timestamp started_at = 25;
+    Timestamp cancelled_at = 13;
+
+    // RideReservation 콜 상세정보 조회 시 주의사항:
+    //
+    // RideReservation의 expected_pick_up_at과 prestart_enable_at, start_enable_at 에 따라 버튼을 다르게 내려주어야 합니다.
+    //
+    // 운행 상세 화면 버튼 처리 방식
+    //
+    // 1) 현재시각 < prestart_enable_at                   -> '탑승지로 안내' 버튼 딤처리 및 '탑승시각 x시간 전부터 가능' 문구 추가
+    // 2) prestart_enable_at <= 현재시각 < start_enable_at -> '탑승지로 안내' 버튼 활성화
+    // 3) start_enable_at <= 현재시각                      -> '고객에게 탑승 준비 요청' 활성화
+    Timestamp prestart_enable_at = 30;
+    Timestamp start_enable_at = 31;
+
+    // 적립 예정인 크레딧 및 문구를 내려줍니다.
+    // 1) deposit_description -> ex) "플러스 탑승 (5% 적립 예정)
+    // 2) expected_credit_deposit_amount -> 예상 크레딧 적립양
+    // 100이 내려갈 경우 "+ 100 크레딧"으로 표시해줘야 합니다.
+    // 3) 호출예약에서는 credit_deposit_amount, expected_benefit_text를 사용하지 않습니다.
+    RideDTO.PassportMembershipBenefit passport_membership_benefit = 15;
+
+    // 호출예약이 드라이버에 의해 accepted 된 경우에만 값이 설정됩니다.
+    // 즉, CANCELLED 상태일때도 호출예약이 Accepted된 적이 없다면 설정되어 있지 않을 수 있습니다.
+    // 또한, driver와 vehicle은 expected_pick_up_at 20분 전부터만 내려갑니다.
+    DriverDTO driver = 16;
+    VehicleDTO vehicle = 28;
+    bool show_call_driver_button = 17;
+
+    PopUp driver_accept_warning_pop_up = 18; // PENDING일 때만 내려간다.
+    PopUp driver_cancel_warning_pop_up = 19; // ACCEPT, PRESTARTED일 때만 내려간다.
+
+    CancellationCause cancellation_cause = 14;
+    RideCancellationFeeType cancellation_fee_type = 21;
+    repeated RideCancellationFeePolicy cancellation_fee_policies = 26;
+    bool is_driver_no_show = 27;
+
+    StringValue biz_reason = 29;
+}
+
+message RideReservationReceiptDTO {
+    message LineItem {
+        // 화면에 표시되어야 하는 이름
+        string name = 2;
+        // 금액. 할인이라도 항상 양수가 들어온다.
+        int32 amount_krw = 3;
+    }
+
+    int32 total_price_krw = 1;
+    repeated LineItem lineItem = 2;
+    int32 driver_profit_krw = 3;
+}
+
+message RideReservationEstimationDTO {
+    Int32Value distance_meters = 1;
+    Int32Value duration_seconds = 2;
+    int32 cost = 3; // won
+    int32 surge_percentage = 4;
+    StringValue surge_policy_id = 5;
+    Timestamp estimated_at = 6;
+}
+
+message UserCompactRideReservationDTO {
+    enum Status {
+        UNKNOWN = 0;
+        PENDING = 1; // 예약 접수
+        ACCEPTED = 2; // 예약 확정
+        STARTED = 3; // 탑승 중
+    }
+    string id = 1;
+
+    RideTypeDescription ride_type_description = 2;
+
+    string ride_type = 9;
+
+    Status status = 4;
+
+    Timestamp expected_pick_up_at = 5;
+
+    // 라이더가 요청한 출발 지점
+    AddressedLocation origin = 6;
+
+    // 라이더가 요청한 도착 지점
+    AddressedLocation destination = 7;
+
+    // 예상 요금
+    int32 expected_price_krw = 8;
+
+    // 제공받을 패스포트 멤버십 혜택 관련 문구
+    // ex) "500 크레딧 적립 예정"
+    StringValue expected_passport_membership_benefit_description = 35;
+}
+
+message DriverCompactRideReservationDTO {
+    string id = 1;
+
+    Timestamp reservation_accepted_at = 2;
+    Timestamp expected_pick_up_at = 3;
+    Timestamp cancelled_at = 4;
+
+    RideReservationDTO.CancellationCause cancellation_cause = 5;
+    StringValue cancellationReason = 6;
+
+    UserDTO rider = 7;
+
+    AddressedLocation origin = 8;
+
+    Int32Value cancellation_fee = 9;
+}

@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverGetMonthlyTripReviewStatisticsEntryProto";
+
+// 설명:
+// 드라이버앱에서 한 달 치의 예약 운행의 리뷰 통게를 가져올 떄 드라이버 앱에서 호출된다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverGetMonthlyTripReviewStatisticsEntryParams {
+    // 연도와 월
+    int32 year = 1;
+    int32 month = 2;
+}
+
+message DriverGetMonthlyTripReviewStatisticsEntryResult {
+    ReviewStatisticsEntryDTO entry = 1;
+    bool has_prev_month = 2;
+    bool has_next_month = 3;
+}

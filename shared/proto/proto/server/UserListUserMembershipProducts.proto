@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "membership.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserListUserMembershipProductsProto";
+
+// 설명:
+// 패스포트 판매 페이지에서 상품을 보여주기 위해 라이더 앱에서 호출한다.
+// 매진 여부는 DTO에 포함된다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+
+message UserListUserMembershipProductsParams {
+}
+
+message UserListUserMembershipProductsResult {
+    repeated UserMembershipProductDTO products = 1;
+}

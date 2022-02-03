@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "mission.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverActivateMissionDispatchTicketProto";
+
+// 설명:
+// 드라이버가 1:1 배정권을 활성화시킬 때 핸들모아 앱에서 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+// TBD
+
+message DriverActivateMissionDispatchTicketParams {
+    string ticket_id = 1;
+}
+
+message DriverActivateMissionDispatchTicketResult {
+    MissionDispatchTicketDTO ticket = 1;
+}

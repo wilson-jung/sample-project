@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverLogNavigationOpenProto";
+
+// 설명:
+// 드라이버앱에서 길안내 버튼을 누른 경우 호출된다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverLogNavigationOpenParams {
+    enum NavigationApp {
+        TMAP = 0;
+        ATLAN = 1;
+        NAVER = 2;
+    }
+    enum DestinationType {
+        UNSPECIFIED = 0;
+        RIDE_ORIGIN = 1;
+        RIDE_DESTINATION = 2;
+        RIDE_RESERVATION_ORIGIN = 9;
+        TRIP_ORIGIN = 3;
+        TRIP_DESTINATION = 4;
+        ASSIGNED_AREA = 5;
+        VEHICLE_ZONE = 6;
+        RIDE_WAYPOINT = 7;
+        TRIP_WAYPOINT = 8;
+    }
+    NavigationApp app = 1;
+    DestinationType destinationType = 2;
+    int64 clientTimeMs = 3;
+
+    // Optional: 안전 운행 모드로 가는 경우 아무 값도 넣어주지 않아도 됩니다.
+    double lng = 4;
+    // Optional: 안전 운행 모드로 가는 경우 아무 값도 넣어주지 않아도 됩니다.
+    double lat = 5;
+    // Optional: 현재 라이드가 없다면 아무 값도 넣어주지 않아도 됩니다.
+    string rideId = 10;
+    // Optional: 현재 라이드가 없다면 아무 값도 넣어주지 않아도 됩니다.
+    string rideStatus = 11;
+    // Optional: 현재 트립이 없다면 아무 값도 넣어주지 않아도 됩니다.
+    string tripId = 12;
+    // Optional: 현재 트립이 없다면 아무 값도 넣어주지 않아도 됩니다.
+    string tripRideStatus = 13;
+    // Optional: 현재 미션이 없다면 아무 값도 넣어주지 않아도 됩니다.
+    string missionId = 14;
+}
+
+message DriverLogNavigationOpenResult {
+}

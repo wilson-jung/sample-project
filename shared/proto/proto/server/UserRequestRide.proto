@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+import "common.proto";
+import "ride.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserRequestRideProto";
+
+// 설명:
+// 배차 요청을 할때 라이더앱에서 호출된다.
+//
+// 에러코드:
+// BAD_REQUEST: 위도,경도가 잘못 된 경우, 알수 없는 RideType을 올려준 경우
+// UNAVAILABLE_ORIGIN: 서비스 지역이 아닌 출발지인 경우
+// UNAVALIABLE_DESTINATION: 서비스 지역이 아닌 도착지인 경우
+// INVALID_ESTIMATION_TOKEN: EstimationToken이 유효하지 않은 경우
+// REESTIMATION_NEEDED: 교통상황의 변화, 토큰 만료 등으로 Estimation을 다시 해야하는 경우
+//
+// REESTIMATION_NEEDED이 호출된 경우:
+// 사용자에게 얼럿창을 띄워주고 사용자가 확인 버튼을 누른 경우
+// 다시 Estimation을 하여 화면에 반영하고, 사용자가 다시 요청 버튼을 누르는 식으로 구현되어야 합니다.
+// 예를 들어, Estimation하는 시점에에는 서지 프라이스가 적용 안된 상황이었는데,
+// RequestRide하는 시점에 서비 프라이스가 적용되어 버린 상태가 되면,
+// 예상 요금과 다른 요금이 부과되는 경우를 방지하기 위함입니다.
+
+message UserRequestRideParams {
+    AddressedLocation origin = 1;
+    AddressedLocation destination = 2;
+
+    // 라이드 타입. RideType, RideTypeGroup의 값이 올 수 있다.
+    // UserListRideTypes를 통해 받은 값을 그대로 올려준다. 그 외의 값이 들어오면 실패한다.
+    string rideType = 3;
+
+    // 사용자가 선택한 결제 수단을 올려준다.
+    // 결제 프로필이 있을 때 같이 올리면, 현재 결제 프로필에 붙은 결제 수단과 다른 경우 오류가 발생한다.
+    StringValue paymentMethodId = 4;
+
+    // 사용자가 선택한 쿠폰을 올려준다.
+    StringValue couponId = 6;
+
+    // 크레딧 사용 여부
+    BoolValue uses_credit = 19;
+
+    // ListRideEstimations 했을때 나오는 Token을 그대로 넣어준다.
+    // (EstimationToken 혹은 NearEstimationToken이다)
+    // Token은 유효기간이 있으므로 REESTIMATION_NEEDED 온 경우 다시 Token을 가져와서 호출해야한다.
+    string estimationToken = 5;
+
+    // 유저가 출발지 설정을 어떤 방법으로 설정했는지에 대한 정보를 올려준다. 로깅을 위한 필드.
+    LocationSource originSource = 10;
+
+    // 유저가 도착지 설정을 어떤 방법으로 설정했는지에 대한 정보를 올려준다. 로깅을 위한 필드.
+    LocationSource destinationSource = 11;
+
+    // 결제 프로필 ID
+    StringValue paymentProfileId = 12;
+
+    // (비즈니스 프로필 사용시) 호출 목적 기입
+    StringValue bizReason = 13;
+
+    // UserGetPickupPoint에서 서버가 내려준 토큰을 여기서 받아 정보를 사용한다.
+    StringValue pickup_point_token = 14;
+
+    // 경유지 정보를 담은 리스트
+    repeated AddressedLocation waypoints = 16;
+
+    // 대리에 사용될 차량 id
+    StringValue user_vehicle_id = 17 [deprecated=true];
+
+    // 라이드 시 유저 요청사항
+    repeated RideDTO.UserRequestTag user_request_tags = 18;
+
+    // 5분 내에는 안탈게요 옵션 체크 여부
+    // 가까운 타다 요청 시 이 값이 내려오면 에러가 발생합니다.
+    BoolValue not_ride_soon = 20;
+
+    // 유저가 출발지나 도착지 설정을 어떤 방법으로 설정했는지 나타내는 ENUM 값
+    // 클라이언트에서는 UNSPECIFIED는 없는 것으로 생각하고 코드를 작성하시면 됩니다.
+    enum LocationSource {
+        UNSPECIFIED = 0;
+
+        // 출빌지나 도착지 설정을 지도를 통해 설정한 경우
+        GEOCODE = 1;
+
+        // 출빌지나 도착지 설정을 검색된 장소를 통해 설정한 경우
+        PLACE = 2;
+
+        // 최근 설정 값을 통해 설정한 경우
+        HISTORY = 3;
+
+        // 즐겨찾기를 통해 설정한 경우
+        FAVORITE = 4;
+
+        // 현재 위치를 통해 설정한 경우
+        CURRENT = 5;
+    }
+}
+
+message UserRequestRideResult {
+    RideDTO ride = 1; // 배차전
+}

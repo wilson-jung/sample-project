@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserRequestTadaNextPreRecruitmentProto";
+
+// 설명 :
+// 사용자가 대형승압 사전 신청할 때 호출한다
+//
+// 에러코드:
+// BAD_REQUEST: 이미 사전 신청을 한 경우
+
+message UserRequestTadaNextPreRecruitmentParams {
+}
+
+// 응답 : 사전 신청 정보를 내려줌
+
+message UserRequestTadaNextPreRecruitmentResult {
+    EventRecruitmentDTO eventRecruitment = 1;
+}

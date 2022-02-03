@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+import "timestamp.proto";
+import "ride_reservation.proto";
+import "trip.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 드라이버앱에서 넛지를 보여주는 데 필요한 정보를 내려준다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverGetReservationNotificationContentsParams {
+}
+
+message DriverGetReservationNotificationContentsResult {
+    oneof data {
+        RideReservationDTO upcoming_ride_reservation = 1;
+        TripDTO upcoming_trip = 2;
+    }
+    Timestamp off_driver_notify_from = 3;
+    Timestamp working_driver_notify_from = 4;
+    bool pending_reservation_exists = 5;
+}

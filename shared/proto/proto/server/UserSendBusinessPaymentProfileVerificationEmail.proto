@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserSendBusinessPaymentProfileVerificationEmailProto";
+
+// 설명 :
+// 비즈니스 계정 재인증을 위한 이메일을 보낸다.
+//
+// 에러코드 :
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+// EMAIL_SEND_ERROR : 이메일을 보내지 못한 경우
+
+message UserSendBusinessPaymentProfileVerificationEmailParams {
+    string payment_profile_id = 1;
+}
+
+// 응답 : 빈 응답
+
+message UserSendBusinessPaymentProfileVerificationEmailResult {
+}

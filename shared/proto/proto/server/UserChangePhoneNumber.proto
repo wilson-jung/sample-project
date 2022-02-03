@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserChangePhoneNumberProto";
+
+// 설명 :
+// 사용자가 닉네임을 변경할 때 호출한다.
+//
+// 에러 :
+// VERIFIED_TOKEN_EXPIRED : 휴대폰 인증을 위한 토큰이 만료된 경우
+// INVALID_VERIFIED_TOKEN : 휴대폰 인증을 위한 토큰이 유효하지 않은 경우
+
+message UserChangePhoneNumberParams {
+    string verifiedPhoneNumberToken = 1;
+}
+
+// 응답 : user
+
+message UserChangePhoneNumberResult {
+    UserDTO user = 1;
+}

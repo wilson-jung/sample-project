@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package taxi.web_bridge;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.web_bridge";
+option java_outer_classname = "UserOpenPaymentProfileReverification";
+
+
+message UserOpenPaymentProfileReverificationParams {
+    string payment_profile_id = 1;
+}
+
+message UserOpenPaymentProfileReverificationResult {
+}

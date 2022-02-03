@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// [핸들모아] 포인트 내역 화면에 보여줄 연간 통계를 조회한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverGetYearlyGigDriverPointStatisticsParams {
+}
+
+message DriverGetYearlyGigDriverPointStatisticsResult {
+    int32 year = 1;
+
+    int32 fee_deposit = 2;
+    int32 promo_deposit = 3;
+    int32 lucky_deposit = 4;
+    int32 lucky_tax_free_deposit = 5;
+
+    int32 withdrawal = 10;
+}

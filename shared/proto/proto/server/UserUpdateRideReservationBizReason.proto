@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "ride_reservation.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// (비즈니스 프로필) 예약 호출 신청 사유를 업데이트한다.
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 ride_reservation에 해당하는 라이드가 존재하지 않을때
+// BAD_REQUEST: 라이드에 비즈니스 프로필이 설정되어 있지 않을때
+
+message UserUpdateRideReservationBizReasonParams {
+    string ride_reservation_id = 1;
+    string biz_reason = 2;
+}
+
+message UserUpdateRideReservationBizReasonResult {
+    RideReservationDTO ride_reservation = 1;
+}

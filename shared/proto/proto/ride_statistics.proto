@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+import "timestamp.proto";
+import "ride.proto";
+import "ride_reservation.proto";
+
+package taxi;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol";
+option java_outer_classname = "RideReservationProto";
+
+message RideStatisticsDetailDTO {
+    enum RideStatisticsDetailEntryType {
+        RIDE = 0;
+        RIDE_DISPATCH = 1;
+        RIDE_RESERVATION = 2;
+    }
+
+    message CompactRideDispatchDTO {
+        string id = 1;
+        Timestamp createdAt = 3;
+    }
+
+    RideStatisticsDetailEntryType type = 1;
+    oneof entry {
+        // 1. 호출예약이 아닌 Ride 중 최소 accept 한 것 (ACCEPTED 이후 취소 / 하차 완료)
+        // 2. 호출예약 수행 시작을 해서 생긴 Ride (취소 / 하차 완료)
+        DriverCompactRideDTO ride = 2;
+        CompactRideDispatchDTO ride_dispatch = 3; // 수락하지 않고 취소된 RideDispatch
+        DriverCompactRideReservationDTO ride_reservation = 4; // Ride 없이 취소된 호출예약 건
+    }
+}

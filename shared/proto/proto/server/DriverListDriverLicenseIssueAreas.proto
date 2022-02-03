@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverListDriverLicenseIssueAreasProto";
+
+// 설명:
+// 드라이버앱에서 운전면허 등록지역을 조회할 때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListDriverLicenseIssueAreasParams {
+}
+
+message DriverListDriverLicenseIssueAreasResult {
+    message IssueArea {
+        string name = 1;
+        string code = 2;
+    }
+    repeated IssueArea issue_areas = 1;
+}

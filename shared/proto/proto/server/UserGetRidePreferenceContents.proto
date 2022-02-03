@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 클라이언트로 유저의 사전 라이드 요청사항에 대한 화면정보를 돌려준다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+// BAD_REQUEST: ride 가 없는 경우
+
+message UserGetRidePreferenceContentsParams {
+    string ride_id = 1;
+}
+
+message UserGetRidePreferenceContentsResult {
+    message RidePreferenceContents {
+        message RidePreferenceSection {
+            string display_name = 1;
+            repeated RideDTO.UserRidePreference ride_preferences = 2;
+        }
+
+        repeated RidePreferenceSection ride_preference_sections = 1;
+    }
+
+    RidePreferenceContents ride_preference_contents = 1;
+}

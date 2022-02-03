@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverGetMonthlyRideReviewStatisticsEntryProto";
+
+// 설명:
+// 드라이버앱에서 한 달 치의 실시간 라이드의 리뷰 통게를 가져올 떄 드라이버 앱에서 호출된다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverGetMonthlyRideReviewStatisticsEntryParams {
+    // 연도와 월
+    int32 year = 1;
+    int32 month = 2;
+}
+
+message DriverGetMonthlyRideReviewStatisticsEntryResult {
+    ReviewStatisticsEntryDTO entry = 1;
+    DriverReviewStatistics202107DTO statistics202107 = 4;
+    bool hasPrevMonth = 2;
+    bool hasNextMonth = 3;
+}

@@ -1,0 +1,1020 @@
+syntax = "proto3";
+
+package taxi;
+import "wrappers.proto";
+import "timestamp.proto";
+import "google/protobuf/descriptor.proto";
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol";
+option java_outer_classname = "CommonProto";
+
+extend google.protobuf.FieldOptions {
+    bool client_deprecated_field = 50001;
+}
+
+extend google.protobuf.MessageOptions {
+    bool client_deprecated_message = 50001;
+}
+
+extend google.protobuf.EnumOptions {
+    bool client_deprecated_enum = 50001;
+}
+
+extend google.protobuf.EnumValueOptions {
+    bool client_deprecated_enum_value = 50001;
+}
+
+message Location {
+    double lng = 1;
+    double lat = 2;
+}
+
+message AddressedLocation {
+    double lng = 1;
+    double lat = 2;
+    string name = 3;
+    string address = 4;
+    AddressDetail address_detail = 5;
+}
+
+message AddressDetail {
+    StringValue si_do = 1;
+    StringValue si_gun_gu = 2;
+    StringValue eup_myeon_dong = 3;
+    StringValue ri = 4;
+    StringValue beonji = 5;
+    StringValue zip_code = 6;
+    StringValue poi_name = 7;
+}
+
+message VehicleLocation {
+    double lng = 1;
+    double lat = 2;
+    double bearing = 3;
+    double speedMeterPerSecond = 4;
+}
+
+message VehicleDTO {
+    enum IconColor {
+        LIGHT = 0;
+        DARK = 1;
+    }
+
+    string id = 1;
+    string model = 2;
+    string licensePlate = 3;
+    IconColor iconColor = 4;
+    StringValue empty_light_mac_address = 5; // XX:XX:XX:XX:XX:XX 형태
+}
+
+message VehicleZoneDTO {
+    string id = 1;
+    string name = 2;
+    AddressedLocation location = 3;
+}
+
+message UserDTO {
+    string id = 1;
+    string email = 2;
+    string name = 3;
+    string phoneNumber = 4;
+    int64 createdAt = 5;
+}
+
+message UserStatusDTO {
+    // 유저에게 유효한 전화번호가 있는지 확인할 수 있다.
+    // 만약 유효한 전화번호가 없다면 배차 호출을 할 수 없으며 전화번호 인증을 받아야 한다.
+    bool isPhoneNumberVerified = 1;
+
+    // 유저에게 거래 수단이 있는지 확인할 수 있다.
+    // 만약 거래수단이 없다면 배차 호출을 할 수 없으며 결제 수단을 등록해야한다.
+    bool hasPaymentMethod = 2;
+
+    // 유저에게 미수금이 있는지 확인할 수 있다.
+    // 미수금이 있다면 미수금을 해결해야 배차 호출을 할 수 있다.
+    bool hasFailedPayment = 3;
+
+    // 유저에게 새로 수락해야하는 약관이 있는지 여부를 내려준다.
+    // 수락해야할 약관이 있다면 GetUpdatedTermsPopupContent를 호출해 약관 동의 팝업을 띄워야 한다.
+    bool hasUpdatedTerms = 4;
+}
+
+message DriverDTO {
+    string id = 1;
+    string email = 2;
+    string name = 3;
+    string phoneNumber = 4;
+    string profileUrl = 5;
+    int64 createdAt = 6;
+    DriverAgencyDTO agency = 7;
+    DoubleValue rating = 8;
+}
+
+message DriverAgencyDTO {
+    string id = 1;
+    string name = 2;
+}
+
+enum DriverActivityStatus {
+    OFF = 0;
+    IDLE = 1;
+    DISPATCHING = 2;
+    RIDING = 3;
+    TRIP_RETURNING = 4 [(client_deprecated_enum_value) = true];
+    TRIP_RIDING = 5;
+}
+
+enum DriverLevel {
+    BASIC = 0;
+    GOOD = 1;
+    BEST = 2;
+    PERFECT = 3;
+}
+
+message DriverLevelDescription {
+    // 드라이버 레벨
+    // BASIC, GOOD, BEST, PERFECT 등의 값이 올 수 있다.
+    DriverLevel value = 1;
+
+    // 실제 화면에 보여줄 문자열 사람이 알아볼 수 있는 값들
+    // 베이직, 굿, 베스트, 퍼펙트 등의 값이 올 수 있다.
+    string name = 2;
+}
+
+message DriverStatusDTO {
+    enum DriverType {
+        BASIC = 0;
+        ASSIST = 1;
+        VIPVAN = 2;
+        PREMIUM = 3;
+        GIG = 4;
+        LITE = 5;
+        NXT = 6;
+    }
+
+    message AssignedAreaViewInfo {
+        string folded_view_suggestion_reason = 1;
+        string expanded_view_suggestion_reason = 2;
+        string navigate_button_text = 3;
+        SurgeInfo surge_info = 4;
+
+        message SurgeInfo {
+            string suggestion_surge_rate_text = 4;
+            string suggestion_surge_valid_before_text = 5;
+        }
+    }
+
+    DriverActivityStatus activityStatus = 1;
+
+    // 드라이버 레벨 정보
+    DriverLevelDescription level = 5;
+
+    // 드라이버의 평균 평점. 주기적으로 업데이트 된다.
+    // 기본적으로 0.0 부터 10.0 사이의 숫자가 들어오게 된다.
+    // 드라이버가 운행을 한 번도 안했거나 아직 리뷰가 안 쌓였으면 null로 내려가므로 이런 경우 클라이언트가 적당히 처리해야한다.
+    DoubleValue rating = 2;
+
+    // 드라이버의 평균 예약 평점. 주기적으로 업데이트 된다.
+    // 기본적으로 0.0 부터 10.0 사이의 숫자가 들어오게 된다.
+    // 드라이버가 운행을 한 번도 안했거나 아직 리뷰가 안 쌓였으면 null로 내려가므로 이런 경우 클라이언트가 적당히 처리해야한다.
+    DoubleValue trip_rating = 8;
+
+    // 할당된 대기 지역
+    // assignedArea.address는 empty string이 내려간다.
+    // assignedArea.name은 empty string일 수 있다.
+    AddressedLocation assignedArea = 6;
+
+    AssignedAreaViewInfo assigned_area_view_info = 18;
+
+    // 드라이버의 타입을 내려준다.
+    // VIPVAN: VIPVAN(택시) 드라이버 (기존 isPrivate으로 내려주고 있었음)
+    // ASSIST: 어시스트 상품 드라이버
+    DriverType type = 7;
+
+    // 차고지
+    VehicleZoneDTO vehicleZone = 10;
+
+    // Trip 차고지로 돌아가기 기능 활성화되는지 알려준다.
+    bool hasTripReturning = 11;
+
+    // 예약 예정되었던 Trip 수
+    UInt32Value scheduledTripCount = 12;
+
+    // 개인사업자 여부
+    bool isIndividualBusiness = 13;
+
+    // 본인인증 완료 여부
+    bool is_identity_certificated = 14;
+
+    // 예약 수행만 가능한 드라이버인지 여부.
+    BoolValue isTripOnly = 15;
+
+    // 변경된 약관이 있는지 여부.
+    // true로 내려가면 출근하기 전에 DriverGetUpdatedTerms API로 내려가는 약관에 대해 동의를 받아야 한다.
+    BoolValue has_updated_terms = 16;
+
+    // 변경된 요금 정산 방식이 있는지 여부.
+    // true로 내려가면 출근하기 전에 DriverGetUpdatedFeeTerms API로 내려가는 요금 정산 방식에 대해 동의를 받아야 한다.
+    BoolValue has_updated_fee_terms = 17;
+
+    // 포워드 디스패치 수신중 여부
+    BoolValue is_forward_dispatch_enabled = 19;
+}
+
+message DriverSocarStatusDTO {
+    // 결제수단
+    DriverPaymentMethodDTO payment_method = 1;
+
+    // 운전면허
+    DriverLicenseDTO driver_license = 2;
+
+    // 드라이버 PF 구매 여부
+    // 이 필드는 드라이버가 PF 구매를 해야하는 상태인지 아닌지 나타낸다.
+    // 이미 필요한 금액을 결제한 경우, true로 내려간다.
+    bool is_driver_protection_fee_product_purchased = 3;
+
+    // 드라이버 PF 강제 구매 여부
+    // 만약 설정되어 있지 않다면 PF 관련 화면을 띄우지 않습니다.
+    BoolValue is_driver_protection_fee_product_purchase_required = 4;
+
+    // 드라이버 PF 약관 동의 여부
+    bool is_driver_protection_fee_product_terms_agreed = 5;
+
+    // 현재 구매한 PF 상품
+    // 이미 필요한 금액을 결제한 경우, 해당일 마지막 PF 결제건이 내려간다.
+    DriverProtectionFeeProductPurchaseDTO driver_protection_fee_product_purchase = 6;
+}
+
+message DriverInsuranceInformationDTO {
+    // 보험사
+    string insurance_company_name = 1;
+    // 증권번호
+    string policy_number = 2;
+    // 시작날짜 (YYYY-MM-DD)
+    string start_date = 3;
+    // 종료날짜 (YYYY-MM-DD)
+    string end_date = 4;
+    // 건당 보험료
+    int32 premium_amount = 5;
+}
+
+message DriverLicenseDTO {
+    // 면허 상태
+    enum Status {
+        ACTIVE = 0;
+        PENDING = 1;
+        EXPIRED = 2;
+        DISABLED = 3;
+    }
+
+    Status status = 1;
+    // 면허 번호
+    string license_number = 2;
+    // 면허 만료일 (ISO8601 Local Date ex. yyyy-MM-dd)
+    string expiration_date = 3;
+}
+
+message DriverPaymentMethodDTO {
+    // 카드 상태
+    enum Status {
+        ACTIVE = 0;
+        DISABLED = 1;
+    }
+
+    string id = 1;
+    Status status = 2;
+    int64 created_at = 3;
+    PaymentMethodDTO.Card card = 4;
+}
+
+message DriverProtectionFeeProductPurchaseDTO {
+    enum Status {
+        ACTIVE = 0;
+        CANCELLED = 1;
+        UNAVAILABLE = 2;
+    }
+    string id = 1;
+    Status status = 2;
+    int64 purchased_at = 3;
+    DriverProtectionFeeProductDTO product = 4;
+}
+
+message DriverProtectionFeeProductDTO {
+    string id = 1;
+    int32 price_KRW = 2;
+}
+
+message DriverScheduleDTO {
+    int64 startAt = 1;
+    int64 endAt = 2;
+
+    VehicleZoneDTO vehicleZone = 3;
+
+    // 배차 받을 예정인 차량.
+    // 이미 드라이버가 운행 중인 차량과는 의미적으로 구분되어진다.
+    // 배차 받을 예정인 차량이 없으면 null로 내려간다.
+    VehicleDTO vehicle = 4;
+}
+
+message PaymentMethodDTO {
+    enum Status {
+        ACTIVE = 0;
+        EXPIRED = 1;
+        PAYMENT_FAILED = 2;
+        DISABLED = 3;
+    }
+    enum Type {
+        CARD = 0;
+        BIZ_CARD = 1;
+        BIZ_CREDIT = 2;
+        TOSS_APP = 3;
+    }
+    enum CardType {
+        CORPORATION = 0;
+        PERSONAL = 1;
+        UNSPECIFIED = 2;
+    }
+    message CardExpiry {
+        // 2자리 연도
+        int32 year = 1;
+        int32 month = 2;
+    }
+    enum CardPartialNumberType {
+        SUFFIX = 0;
+        PREFIX = 1;
+    }
+    message Card {
+        CardType type = 1;
+        string publisher = 2;
+        // 카드의 앞자리 혹은 뒷자리
+        string partialNumber = 3;
+        CardPartialNumberType partial_number_type = 5;
+    }
+    message BizCard {
+    }
+    message BizCredit {
+        bool insufficient_credit = 1;
+    }
+    message Bank {
+        string name = 1;
+    }
+    message TossAppPay {
+        oneof method {
+            Bank bank = 1;
+            Card card = 2;
+        }
+    }
+    string id = 1;
+    Status status = 2;
+    Type type = 3;
+    int64 createdAt = 4;
+    oneof method {
+        Card card = 5;
+        BizCard biz_card = 6;
+        BizCredit biz_credit = 7;
+        TossAppPay toss_app_pay = 8;
+    }
+}
+
+message PaymentDTO {
+    enum Status {
+        PENDING = 0;
+        COMPLETED = 1;
+        FAILED = 2;
+        RETRYING = 3;
+        REFUND_FAILED = 4;
+    }
+    string id = 1;
+    int32 amount = 2;
+    Status status = 3;
+    int64 createdAt = 4;
+
+    // 무엇을 위한 Payment인지 설명하는 문자열 (예: '베이직 탑승')
+    // 현재는 /u/ListFailedPayments의 맥락에서만 달아줍니다.
+    string description = 5;
+
+    // 최종적으로 결제 시도한 결제수단
+    // 현재는 /u/ListFailedPayments의 맥락에서만 달아줍니다.
+    PaymentMethodDTO paymentMethod = 6;
+
+    // 최종적으로 결제 시도한 결제프로필
+    // 현재는 /u/ListFailedPayments의 맥락에서만 달아줍니다.
+    // 주의: 결제 프로필 안에 있는 PaymentMethod는 사용하지 마세요! Payment의 PaymentMethod와 다를 수 있음.
+    PaymentProfileDTO paymentProfile = 7;
+}
+
+message DriverActivityStatisticsEntryDTO {
+    enum PeriodType {
+        DAILY = 0;
+        MONTHLY = 1;
+    }
+    message TimeRange {
+        int64 startMs = 1;
+        int64 endMs = 2;
+    }
+    message RideStatistics {
+        // 총 라이드 갯수
+        int32 totalCount = 1;
+
+        // 총 운행 시간
+        //   이 필드에 저장되는 값은 대부분의 경우(95% ~ ) 총 운행시간이 맞습니다.
+        //
+        //   다만 특이한 경우가 프리미엄 개인사업자 드라이버가 "드라이버앱 > 운행이력" 화면에서 보이는 "총 운행시간" 값인데
+        //
+        //   cell_premium_booking_revenue 에 정의된 값에 따라 보여줘야 했고
+        //     https://docs.google.com/presentation/d/1sHwH_Jmg6cB5gwVKztX18MUkJAvGowT3L9FhH9-EjDk/edit#slide=id.g73d6559caf_0_127
+        //   tada-android 프로젝트에서 이 필드를 쓰지 않습니다.
+        //
+        //   DriverActivityStatusStatistics stuct 의 아래 값들을 더해서 화면에 보여줍니다.
+        //      totalDispatchingDurationSeconds
+        //      totalRidingDurationSeconds
+        //      totalTripRidingDurationSeconds
+        //      (이 값은 trip_return 상태는 이제 없습니다)
+        //
+        //   (총 라이드 갯수, 총 운행거리, 총 매출, 총 운행시간 모두 tada-android 에서 프리미엄일 때만 약간 다르게 처리합니다, PremiumHeaderHoler class 에서.)
+        int64 totalDurationSeconds = 2;
+
+        // 총 운행 거리
+        int64 totalDistanceMeters = 3;
+
+        // 총 매출
+        int64 totalCost = 4;
+
+        // 드라이버가 라이드를 취소한 횟수
+        //   드라이버 때문에 라이드가 취소된 전체 횟수는 아닙니다.
+        //   아래 값이 저장됩니다.
+        //     rideStatisticsEntry.driverCancelledCount - rideStatisticsEntry.allowedDriverCancelledCount
+        int32 totalDriverCancelledCount = 5;
+
+        // 라이더가 라이드를 취소한 횟수
+        int32 totalRiderCancelledCount = 6;
+
+        // 드라이버의 유효 배차 횟수 (배차 수락, 거절, 타임아웃 횟수의 합)
+        int32 totalDispatchCount = 7;
+
+        // 드라이버의 배차 수락 횟수
+        int32 totalDispatchAcceptCount = 8;
+
+        // 드라이버의 배차 거절 횟수
+        int32 totalDispatchRejectCount = 9;
+
+        // 드라이버의 배차 타임아웃 횟수
+        int32 totalDispatchTimeoutCount = 10;
+
+        // 드라이버의 이용료 합계액
+        int32 total_call_fee = 11;
+    }
+
+    message TripStatistics {
+        // 총 예약 갯수
+        int32 total_count = 1;
+
+        // 총 운행 시간
+        int64 total_duration_seconds = 2;
+
+        // 총 운행 거리
+        int64 total_distance_meters = 3;
+
+        // 총 매출
+        int64 total_cost = 4;
+    }
+
+    // MONTLY인 경우 YYYY-MM으로 내려온다.
+    // DAILY인 경우 YYYY-MM-DD로 내려온다.
+    string period = 1;
+    PeriodType periodType = 2;
+    TimeRange timeRange = 3;
+    RideStatistics statistics = 4;
+    // 프리미엄 드라이버의 경우에만 내려간다.
+    // 운행 시간을 보여줄 시 dispatchingDuration과 (trip)ridingDuration을 이용하면 되고, 나머지는 0으로 내려간다.
+    DriverActivityStatusStatisticsEntryDTO.DriverActivityStatusStatistics activityStatistics = 5;
+    // 프리미엄 개인 드라이버의 경우에만 내려간다.
+    TripStatistics trip_statistics = 6;
+}
+
+message ReviewStatisticsEntryDTO {
+    message ReviewReasonStatisticsEntryDTO {
+        string reason = 1;
+        int32 count = 2;
+    }
+    message ReviewStatistics {
+        // 평균 평점
+        double rating = 1;
+
+        // 총 리뷰 갯수
+        int32 totalCount = 2;
+
+        // 총 5점 리뷰 갯수
+        int32 totalSatisfiedCount = 3;
+
+        // 개선사항에 대한 통계 정보. 클라이언트는 내려주는 순서대로 보여주면 된다.
+        repeated ReviewReasonStatisticsEntryDTO reasonStatisticsEntries = 4;
+    }
+    // YYYY-MM으로 내려온다.
+    // 월별 별점 셀 이후 year와 month로 내려주기로 합의
+    // 드라이버 특정 버전까지만 내려감(추후에 업데이트 예정)
+    string period = 1 [(client_deprecated_field)=true];
+    int32 year = 2;
+    int32 month = 3;
+
+    ReviewStatistics statistics = 4;
+}
+
+message DriverReviewStatistics202107DTO {
+    message RatingEntry {
+        enum RatingTier {
+            NONE = 0;
+            VERY_LOW = 1;
+            LOW = 2;
+            SOSO = 3;
+            HIGH = 4;
+        }
+
+        double rating = 1;
+        Int32Value rating_top_percentile = 2;
+        RatingTier tier = 3;
+    }
+
+    message TagEntry {
+        enum TagTier {
+            NONE = 0;
+            UNSATISFIED = 1;
+            LITTLE_UNSATISFIED = 2;
+            SOSO = 3;
+            SATISFIED = 4;
+        }
+        string tag_name = 1;
+        int32 count = 2;
+        Int32Value count_top_percentile = 3;
+        TagTier tier = 4;
+    }
+
+    message ReviewStatistics {
+        int32 total_count = 1;
+        int32 total_satisfied_count = 2;
+        RatingEntry rating_entry = 3;
+        repeated TagEntry tag_entries = 4;
+    }
+
+    int32 year = 1;
+    int32 month = 2;
+    ReviewStatistics statistics = 3;
+}
+
+message DriverActivityStatusStatisticsEntryDTO {
+    message DriverActivityStatusStatistics {
+        int64 totalOffDurationSeconds = 1;
+        int64 totalIdleDurationSeconds = 2;
+        int64 totalDispatchingDurationSeconds = 3;
+        int64 totalRidingDurationSeconds = 4;
+        int64 totalTripRidingDurationSeconds = 5;
+    }
+    string date = 1;
+    DriverActivityStatusStatistics statistics = 2;
+}
+
+message UserPreferencesDTO {
+    bool isMarketingNotificationEnabled = 1;
+    bool isMarketingEmailEnabled = 2;
+    bool isMarketingSmsEnabled = 3;
+    bool isInformativeNotificationEnabled = 4;
+    bool isInformativeEmailEnabled = 5;
+    bool isInformativeSmsEnabled = 6;
+}
+
+enum SmartKeyCommand {
+    OPEN = 0;
+    CLOSE = 1;
+    LIGHT = 2;
+    KLAXON = 3;
+}
+
+// id 값이 null 로 변경된 경우, 빈 문자열 ("") 로 올려주세요.
+message TrackingIdentifiers {
+    StringValue appsflyer_id = 1;
+    StringValue gaid = 2;
+    StringValue idfa = 3;
+    StringValue idfv = 4;
+}
+
+enum ShareChannel {
+    COPY = 0;
+    KAKAO_TALK = 1;
+    LINE = 2;
+    FB_MSG = 3;
+    BETWEEN = 4;
+    SMS = 5;
+    WHATS_APP = 6;
+    EMAIL = 7;
+    ETC = 8;
+}
+
+// 어시스트 등록 타입
+enum AssistRegistrationType {
+    // 65세 이상인 경우
+    SENIOR = 0;
+    // 장애인 회원인 경우
+    DISABLED_PERSON = 1;
+}
+
+message RideAvailabilityIssue {
+    enum Type {
+        UNSPECIFIED = 0;
+
+        // 서비스 가능한 출발지가 이니라서 호출이 불가능한 경우
+        // ex) 현재 부산을 출발지로 호출 할 수 없음
+        UNAVAILABLE_ORIGIN = 1;
+
+        // 서비스 가능한 도착지가 아니라서 호출이 불가능한 경우
+        // ex) 현재 부산을 도착지로 호출 할 수 없음
+        // 출발지와 도착지가 너무 가까운 경우
+        // ex) 2019.02.01 기준 100미터
+        UNAVAILABLE_DESTINATION = 2;
+
+        // 호출은 가능하지만, 운행 시간이 아니라서 요청을 호출 할 수 없는 경우
+        // ex) 알파 버전은 저녁 7시부터 새벽 4시까지만 차량이 배차될 수 있음
+        UNAVAILABLE_TIME = 3;
+
+        // 호출은 가능하지만, 출발지가 서비스 지역이 아니라서 품질을 보장할 수 없는 경우
+        // ex) 알파 버전은 강남3구, 성수동 외 지역은 설정은 가능하지만 품질 관련 이슈가 있음
+        UNMANAGED_ORIGIN = 4;
+
+        // 어시스트 상품을 선택했지만 어시스트 등록이 되어있지 않은 경우
+        ASSIST_REGISTRATION_REQUIRED = 5 [(client_deprecated_enum_value) = true];
+
+        // 수락해야할 약관이 있어서 차량 호출을 할 수 없는 경우
+        HAS_UPDATED_TERMS = 6;
+
+        // 카드가 유효하지 않은 경우
+        INVALID_PAYMENT_METHOD = 7;
+
+        // 비즈니스 계정 재인증이 필요한 경우
+        BUSINESS_PAYMENT_PROFILE_VERIFICATION_NEEDED = 8;
+
+        // 경유지 설정이 불가한 경우 (최대개수 초과, 미지원 지역 등)
+        UNAVAILABLE_WAYPOINTS = 13;
+
+        // 타다 라이트가 호출뷰에 노출은 되지만 아직 서비스 시작은 안 한 경우
+        LITE_INACTIVE = 14;
+
+        // 주변차 없음
+        UNAVAILABLE_NEARBY_VEHICLES = 15;
+
+        // 다가오는 호출예약이 있지만 호출은 가능한 경우
+        UPCOMING_RIDE_RESERVATION_TO_WARN = 16;
+
+        // 다가오는 호출예약이 있어 취소 후에 호출이 가능한 경우
+        UPCOMING_RIDE_RESERVATION_TO_CANCEL = 17;
+    }
+    Type type = 1;
+
+    // Issue가 있는데도 불구하고 호출하려 하는 경우 클라에서 팝업을 띄워줍니다.
+    // 클라에서 팝업 내용으로 아래 내용을 그대로 노출시켜주면 됩니다.
+    string message = 2;
+    string title = 3;
+    Image image = 6;
+
+    message Button {
+        string name = 1;
+        // null 이면 단순하게 닫습니다.
+        StringValue deepLink = 2;
+    }
+    Button button = 5;
+    string log_key = 7;
+}
+
+message Terms {
+    string id = 1;
+    string name = 2;
+    string url = 3;
+    bool required = 4;
+}
+
+message TermsEntry {
+    string id = 1;
+    string name = 2;
+    bool required = 4;
+    // 하위 terms를 가질 경우 url이 null이 됨
+    StringValue url = 3;
+    repeated TermsEntry terms = 5;
+}
+
+message Image {
+    string url = 1;
+    int32 width = 2;
+    int32 height = 3;
+}
+
+message BrazeEvent {
+    string eventName = 1;
+    repeated Property properties = 2;
+
+    message Property {
+        string key = 1;
+        string value = 2;
+    }
+}
+
+message PaymentProfileDTO {
+    enum Type {
+        PERSONAL = 0;
+        BUSINESS = 1;
+    }
+    enum Status {
+        ACTIVE = 0;
+        DEACTIVATED = 1;
+        DELETED = 2;
+    }
+
+    string id = 1;
+    string name = 2;
+    string email = 3;
+    Type type = 4;
+    Status status = 5;
+
+    // 없을 수도 있음
+    PaymentMethodDTO paymentMethod = 6;
+
+    // 결제수단 고정(변경 불가) 여부
+    bool isPaymentMethodFixed = 7;
+
+    // 재인증 필요 여부
+    bool needs_verification = 8;
+}
+
+message FavoritePlaceDTO {
+    enum Type {
+        CUSTOM = 0;
+        HOME = 1;
+        WORKPLACE = 2;
+    }
+
+    string id = 1;
+    Type type = 2;
+    string name = 3;
+    AddressedLocation location = 4;
+    int64 createdAt = 5;
+}
+
+enum AirportCode {
+    ICN_1 = 0;
+    ICN_2 = 1;
+    GMP_INTERNATIONAL = 3;
+    GMP_DOMESTIC = 4;
+    CJU_INTERNATIONAL = 5;
+    CJU_DOMESTIC = 6;
+    PUS_INTERNATIONAL = 7;
+    PUS_DOMESTIC = 8;
+}
+
+message TipPolicy {
+    // 추후 아이콘 등 추가 속성을 넣을 수 있도록 message로 정의.
+    message AmountEntry {
+        // 0이 될 수 있다.
+        int32 amount = 1;
+    }
+    bool enabled = 1;
+    repeated AmountEntry amount_entries = 2;
+}
+
+// 실시간, 예약의 감사메시지를 담고 있는 객체.
+message DriverPraiseDTO {
+    string id = 1;
+    int32 rating = 2;
+    string reason = 3;
+    int64 createdAt = 4;
+}
+
+message GigDriverLicenseDTO {
+    enum Status {
+        NONE = 0;
+        PENDING = 1;
+        APPROVAL_REQUESTED = 2;
+        ACTIVE = 3;
+        REJECTED = 4;
+        INACTIVE = 5;
+    }
+
+    string id = 1;
+    Status status = 2;
+    string license_type_name = 3;
+
+    // 프로필 사진: 원본 주소
+    StringValue profile_photo_url = 10;
+    // 프로필 사진: 앱에 표시할 때 사용할 주소
+    StringValue profile_photo_preview_url = 11;
+    // 프로필 사진: 승인 여부
+    BoolValue profile_photo_approved = 12;
+
+    // 면허 인증 사진: 원본 주소
+    StringValue verification_photo_url = 20;
+    // 면허 인증 사진: 앱에 표시할 때 사용할 주소
+    StringValue verification_photo_preview_url = 21;
+    // 면허 인증 사진: 승인 여부
+    BoolValue verification_photo_approved = 22;
+
+    // 운전 경력 증명서: 업로드 필요 여부
+    bool issue_date_verification_photo_required = 30;
+    // 운전 경력 증명서: 원본 주소
+    StringValue issue_date_verification_photo_url = 31;
+    // 운전 경력 증명서: 앱에 표시할 때 사용할 주소
+    StringValue issue_date_verification_photo_preview_url = 32;
+    // 운전 경력 증명서: 승인 여부
+    BoolValue issue_date_verification_photo_approved = 33;
+
+    // 반려된 경우 반려 사유
+    StringValue rejected_reason = 40;
+}
+
+message GigDriverStatusDTO {
+    GigDriverLicenseDTO.Status license_status = 1;
+    bool should_update_location = 2;
+    bool has_delayed_payment = 3;
+
+    bool is_receiving_daeri_mission = 10;
+    DaeriMissionPreferences daeri_mission_preferences = 11;
+    DriverQualificationDTO.Status daeri_qualification_status = 12;
+    // 대리 밴 여부
+    bool is_daeri_banned = 13;
+    // 대리 이용이 불가한 경우 그 종료 시각.
+    // is_daeri_banned가 true인데 이 필드가 null이면 영구정지를 당한 것이다.
+    Timestamp daeri_ban_end_at = 14;
+    // 대리 이용이 불가능할 경우 홈에서 대리 콜리스트로 진입할 때 띄워줄 메시지
+    StringValue daeri_banned_alert_message = 15;
+    // 드라이버의 대리 운행 평균 평점. 주기적으로 업데이트 된다.
+    // 기본적으로 0.00 부터 10.00 사이의 숫자가 들어오게 된다.
+    // 아직 한 번도 업데이트 되지 않은 경우 null이 내려가므로 클라가 적절히 처리해줘야 한다.
+    DoubleValue daeri_rating = 20;
+}
+
+message DaeriMissionPreferences {
+    message PreferredArea {
+        string si_do = 1;
+        string si_gun_gu = 2;
+        string code = 3;
+    }
+
+    int32 search_radius_meters = 1;
+    repeated PreferredArea preferred_destination_areas = 2;
+    Int32Value min_driver_fee = 3;
+    DaeriTransportationMedium to_origin_transportation_medium = 4;
+}
+
+message UserVehicleDTO {
+    // ???
+    enum GearType {
+        // 자동
+        AUTO = 0;
+        // 수동
+        MANUAL = 1;
+    }
+
+    string id = 1;
+    string manufacturer = 2;
+    string model = 3;
+    GearType gear_type = 4;
+    string license_plate = 5;
+    int32 seats = 6;
+
+    StringValue driver_manual_link = 100;
+}
+
+message DriverQualificationDTO {
+    enum Status {
+        // 등록 신청을 한 적이 없다.
+        NONE = 0;
+        // 등록 완료
+        ACTIVE = 1;
+        // TODO: 신청 프로세스에 따라 상태 추가하기
+    }
+
+    Status status = 1;
+}
+
+message BankAccount {
+    string bank_name = 1;
+    string account_number = 2;
+    string account_holder = 3;
+}
+
+message GigDriverPointWithdrawalDetails {
+    int32 amount = 1;
+    int32 fee_amount = 2;
+    int32 promo_amount = 3;
+    int32 promo_tax_amount = 4;
+    string promo_tax_rate = 5; // 3.3%
+    int32 lucky_amount = 6;
+    int32 lucky_tax_amount = 7;
+    string lucky_tax_rate = 8; // 22%
+    int32 lucky_tax_free_amount = 9;
+    int32 actual_money_krw = 10;
+}
+
+message GigDriverPaymentDTO {
+    enum Status {
+        PENDING = 0;
+        COMPLETED = 1;
+        CANCELED = 2;
+    }
+    message Property {
+        string name = 1;
+        string value = 2;
+        StringValue description = 3;
+    }
+    string id = 1;
+    // 종류 (자기부담금, 사고처리금 등)
+    string type = 2;
+    // 금액
+    int32 amount = 3;
+    // 납부계좌 은행명
+    string deposit_account_bank_name = 4;
+    // 납부계좌 번호
+    string deposit_account_number = 5;
+    // 예금주명
+    string deposit_account_holder = 6;
+    // 납부기한
+    Timestamp tolerate_until = 7;
+    // 납부현황
+    Status status = 8;
+    // 입금완료 시각 (status=COMPLETED 일때만)
+    Timestamp completed_at = 9;
+    // 상세정보 (운행번호, 운행일시, 출발지, 목적지 등)
+    repeated Property properties = 10;
+}
+
+message DriverPreferencesDTO {
+    bool isMarketingNotificationEnabled = 1;
+    bool isMarketingSmsEnabled = 2;
+    bool isNightMarketingEnabled = 3;
+}
+
+message AccidentReportDTO {
+    enum AccidentType {
+        // 기타
+        OTHER = 0;
+        // 차대차
+        WITH_VEHICLE = 1;
+        // 차대이륜차
+        WITH_TWO_WHEEL_VEHICLE = 2;
+        // 차대인
+        WITH_HUMAN = 3;
+    }
+
+    string id = 1;
+    string insurance_company_name = 2;
+    string insurance_report_id = 3;
+}
+
+enum DaeriTransportationMedium {
+    WALK = 0;
+    KICKBOARD = 1;
+    CAR = 2;
+}
+
+message PopUp {
+    message Button {
+        enum Style {
+            DEFAULT = 0;
+            // 하늘색
+            OK = 1;
+            // 회색
+            CANCEL = 2;
+            // 빨간색
+            DESTRUCTIVE = 3;
+        }
+
+        string text = 1;
+        // null이 내려가면 링크로 이동하지 않고, 팝업을 닫습니다.
+        StringValue link = 2;
+        string log_key = 3;
+        Style style = 4;
+    }
+
+    StringValue title = 1;
+    StringValue body = 2;
+    Image image = 3;
+    // 참고: positive_button과 negative_button 중 하나만 존재하면 팝업 하단을 꽉 채우는 전체 버튼이 된다.
+    // 버튼 두 개를 띄울 때 오른쪽 버튼. 기본값은 하늘색이지만 Button.Style 로 색상을 지정할 수 있다.
+    Button positive_button = 4;
+    // 버튼 두 개를 띄울 때 왼쪽 버튼. 기본값은 회색이지만 Button.Style 로 색상을 지정할 수 있다.
+    Button negative_button = 5;
+    bool is_important = 6;
+}
+
+message EventRecruitmentDTO {
+    enum Type {
+        TADA_NEXT_PRE_RECRUITMENT = 0;
+    }
+
+    enum Status {
+        UNREQUESTED = 0;
+        PENDING = 1;
+        CONFIRMED = 2;
+        DELETED = 3;
+    }
+
+    string id = 1;
+    Type type = 2;
+    Status status = 3;
+}

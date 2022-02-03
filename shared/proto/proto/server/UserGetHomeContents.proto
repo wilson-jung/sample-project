@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetHomeContentsProto";
+
+package taxi.server;
+
+message UserGetHomeContentsParams {
+}
+
+message UserGetHomeContentsResult {
+    message MainBanner {
+        string url = 1;
+        Image image = 2;
+        StringValue log_key = 3;
+        int32 weight = 4;
+    }
+
+    message HiddenBanner {
+        string url = 1;
+        string title = 2;
+        string message = 3;
+        Image image = 4;
+        StringValue log_key = 5;
+    }
+
+    repeated MainBanner main_banners = 1;
+
+    repeated HiddenBanner hidden_banners = 2;
+
+    // 탑승 예정인 호출예약 개수
+    int32 ride_reservation_count = 3;
+}

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetRideReviewProto";
+
+// 설명:
+// 라이더앱에서 라이드에 대한 유저의 리뷰를 확인하고 싶은 경우에 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+// RIDE_REVIEW_DOES_NOT_EXIST = 해당 라이드에 리뷰가 없는 경우
+
+message UserGetRideReviewParams {
+    string rideId = 1;
+}
+
+message UserGetRideReviewResult {
+    RideReviewByUserDTO review = 1;
+}

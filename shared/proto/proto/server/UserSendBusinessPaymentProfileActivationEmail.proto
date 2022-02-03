@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserSendBusinessPaymentProfileActivationEmailProto";
+
+// 설명 :
+// 비즈니스 계정 생성을 위한 인증 이메일을 보낸다.
+//
+// 에러코드 :
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+// EMAIL_SEND_ERROR : 이메일을 보내지 못한 경우
+// BUSINESS_PAYMENT_PROFILE_ACTIVATION_UNAVAILBLE : 이 오류 발생 시 에러 메시지를 띄운 뒤 이메일 입력 화면으로 돌아간다.
+
+message UserSendBusinessPaymentProfileActivationEmailParams {
+    string email = 1;
+    string biz_company_id = 2;
+    string employee_name = 3;
+}
+
+// 응답
+
+message UserSendBusinessPaymentProfileActivationEmailResult {
+    // GetPaymentProfileWithActivationStatusToken을 호출하여 생성된 계정을 가져올 수 있다.
+    string activation_status_token = 1;
+}

@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// Ride 호출이 만료된 경우 다른 타입의 라이드를 제안받기 위해 라이더앱에서 호출된다.
+
+message UserGetAlternativeRideSuggestionParams {
+    string ride_id = 1;
+}
+
+message UserGetAlternativeRideSuggestionResult {
+    message AlternativeRideSuggestion {
+        message ConfirmPopup {
+            string body = 1;
+            string log_key = 2;
+        }
+        string suggestion_button = 1;
+        string suggestion_body = 2;
+        ConfirmPopup confirm_popup = 3;
+        string token = 4;
+    }
+    AlternativeRideSuggestion alternative_ride_suggestion = 1;
+}

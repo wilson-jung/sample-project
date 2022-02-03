@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "mission.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 핸들모아앱에서 운행 내역 통계 중 하위 통계가 필요한 경우 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListMissionSubStatisticsParams {
+    DriverMissionStatisticsDTO.PeriodType period_type = 1;
+    // PeriodType에 해당하는 기간을 포멧에 맞게 넣어주면 된다.
+    // ALL: 빈 값
+    // MONTHLY: YYYY-MM
+    // DAILY: YYYY-MM-DD (KST, 해당 날짜 업무 시작시간 기준. 1월 1일 04시 이라면 1월 1일로 넣어준다.)
+    string period = 2;
+    StringValue next_token = 3;
+}
+
+message DriverListMissionSubStatisticsResult {
+    // 하위 통계 리스트가 필요한 경우 내려간다.(월별로 요청한 경우에 일별 통계)
+    repeated DriverMissionStatisticsDTO sub_statistics = 1;
+    StringValue next_token = 2;
+}
+

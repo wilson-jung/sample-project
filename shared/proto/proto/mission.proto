@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+import "ride.proto";
+import "timestamp.proto";
+
+package taxi;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol";
+
+message DriverMissionDTO {
+    enum MissionType {
+        TRIP_BUNDLE = 0;
+        DAERI = 1;
+    }
+
+    enum Status {
+        PENDING = 0;
+        ACCEPTED = 1;
+        STARTED = 2;
+        COMPLETED = 3;
+        CANCELLED = 4;
+    }
+
+    string id = 1;
+    MissionType type = 2;
+    Status status = 3;
+    int32 estimated_fee = 4;
+    int32 total_fee = 6;
+    int64 version = 5;
+
+    RideDTO ride = 100;
+    DriverMissionPromotionDTO promotion = 200;
+    DriverMissionBannerDTO banner = 300;
+}
+
+message DriverMissionBannerDTO {
+    string banner_emoji = 1;
+    string banner_text = 2;
+}
+
+message DriverMissionPromotionDTO {
+    // 프로모션 타입 (예. BARO_DAERI)
+    string type = 1;
+}
+
+message MissionDispatchTicketDTO {
+    string id = 1;
+    // 이름
+    string name = 2;
+    // 사용가능 만료 기간
+    Timestamp expires_at = 3;
+    // 사용중 여부
+    bool is_active = 4;
+    // 사용중인 경우 활성화 종료 시점
+    Timestamp active_until = 5;
+
+    // 해당 1:1 배정권으로 배정된 콜을 수락하지 않은(넘기기 + 타임아웃) 횟수
+    int32 current_ignore_count = 6;
+    // 1:1 배정권이 expire 되는 미수락(넘기기 + 타임아웃) 횟수
+    int32 allowed_ignore_count = 7;
+}
+
+message MissionDispatchTicketCampaignDTO {
+    string id = 1;
+    // 이름
+    string name = 2;
+    // 획득여부
+    bool is_provided = 3;
+    // 1:1 배정권 획득 이벤트 달성 상태 설명 ("2콜 수행 / 총 3콜", "획득 완료" 등)
+    string progress_description = 4;
+}
+
+message MissionRewardRecordDepositEntry {
+    enum Type {
+        MISSION_REWARD_RECORD = 0;
+        ADDITIONAL_POINT = 1;
+        EVENT = 2;
+    }
+
+    string title = 1;
+    Type type = 2;
+    Timestamp timestamp = 3;
+    int32 amount = 4;
+}
+
+message DriverMissionStatisticsDTO {
+    enum PeriodType {
+        ALL = 0;
+        MONTHLY = 1;
+        DAILY = 2;
+    }
+    message MissionCountDTO {
+        DriverMissionDTO.MissionType type = 1;
+        int32 count = 2;
+    }
+    PeriodType period_type = 1;
+    // PeriodType에 해당하는 기간을 포멧에 맞게 내려간다.
+    // ALL: 빈 값
+    // MONTHLY: YYYY-MM
+    // DAILY: YYYY-MM-DD (KST, 해당 날짜 업무 시작시간 기준. 1월 1일 04시 이라면 1월 1일로 내려간다.)
+    string period = 2;
+    int32 total_revenue_krw = 3;
+    int32 total_count = 4;
+    repeated MissionCountDTO counts = 5;
+}
+
+message DriverCompactMissionDTO {
+    string id = 1;
+    DriverMissionDTO.MissionType type = 2;
+    DriverMissionDTO.Status status = 3;
+
+    int32 total_fee = 6;
+
+    DriverCompactRideDTO ride = 100;
+}

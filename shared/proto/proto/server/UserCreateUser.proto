@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserCreateUserProto";
+
+// 설명 :
+// 회원 가입으로 유저를 만들 때 호출한다.
+//
+// 에러 :
+// INVALID_VERIFIED_TOKEN : 휴대폰 인증을 위한 토큰이 유효하지 않은 경우
+// VERIFIED_TOKEN_EXPIRED : 휴대폰 인증을 위한 토큰이 만료된 경우
+// INVALID_EMAIL_FORMAT : 이메일의 형식이 올바르지 않은 경우
+// EMAIL_ALREADY_EXISTS : 이미 가입된 이메일인 경우
+// INVALID_PASSWORD_FORMAT: 사용할 수 없는 포맷의 비밀번호인 경우
+//                          UserValidatePassword.proto 참고
+// INVALID_NICKNAME_FORMAT : 닉네임 형식이 올바르지 않은 경우
+
+message UserCreateUserParams {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+    string verifiedPhoneNumberToken = 4;
+    TrackingIdentifiers trackingIdentifiers = 6;
+
+    // 유저가 동의한 약관 리스트를 올려준다.
+    // 토큰과 약관은 GetCurrentTerms를 이용해 가져온 값을 사용한다.
+    string acceptToken = 7;
+    repeated string acceptingTermsIds = 8;
+
+    // 약관 관련 프로토콜 변경후 더이상 사용하지 않는 필드
+    bool isMarketingEnabled = 5 [(client_deprecated_field)=true];
+    // 가입 시 마케팅 수신 동의 시 쿠폰을 주는 이벤트 (가마동)에 적용되는가 알려준다.
+    bool should_apply_marketing_agreement_event = 9;
+}
+
+// 응답 : AccessToken + user
+// 발급된 AccessToken은 응답의 X-GRYPHON-SET-ACCESS-TOKEN 헤더에 넣어줍니다.
+// 클라이언트는 이 헤더를 조회하여 클라이언트 앱에 저장하여 사용해야합니다.
+// 일단 로그인이 되면 다른 앱에서는 자동으로 로그인이 풀립니다.
+
+message UserCreateUserResult {
+    UserDTO user = 1;
+}

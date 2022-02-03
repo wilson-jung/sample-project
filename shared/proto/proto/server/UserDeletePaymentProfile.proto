@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserDeletePaymentProfileProto";
+
+// 설명:
+// 사용자가 결제 프로필을 삭제할 때 라이더앱에서 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+
+message UserDeletePaymentProfileParams {
+    string payment_profile_id = 1;
+}
+
+message UserDeletePaymentProfileResult {
+}

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetPaymentMethodWithIssueTokenRequestIdProto";
+
+// 설명:
+// 해당 paymentMethod를 조회하고 싶을 때 라이더앱에서 호출한다.
+//
+// 에러코드:
+// BAD_REQUEST : 유저에 해당하지 않는 paymentMethod를 조회하는 경우
+
+message UserGetPaymentMethodWithIssueTokenRequestIdParams {
+    string issue_token_request_id = 1;
+}
+
+// 응답 : 해당하는 paymentDTO
+
+message UserGetPaymentMethodWithIssueTokenRequestIdResult {
+    PaymentMethodDTO paymentMethod = 1;
+}

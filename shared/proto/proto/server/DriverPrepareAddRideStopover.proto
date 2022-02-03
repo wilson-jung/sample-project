@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// [드라이버 앱] 하차 발생 추가 확인 팝업을 위한 API
+//
+// 에러코드:
+// 공통 에러 코드만 내려간다.
+
+message DriverPrepareAddRideStopoverParams {
+    string ride_id = 1;
+}
+
+message DriverPrepareAddRideStopoverResult {
+    string current_address = 1;
+    string add_token = 2; // 토큰은 5분간 유효하다.
+}

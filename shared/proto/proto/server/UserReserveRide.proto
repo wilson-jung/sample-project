@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "common.proto";
+import "ride_reservation.proto";
+import "wrappers.proto";
+import "timestamp.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 라이더가 예약 호출을 생성할 때 사용합니다
+
+message UserReserveRideParams {
+    string ride_type = 1;
+    repeated Timestamp expected_pick_up_at = 2;
+    AddressedLocation origin = 3;
+    AddressedLocation destination = 4;
+    string payment_method_id = 7;
+    string payment_profile_id = 8;
+    string estimation_token = 9;
+    StringValue biz_reason = 10;
+    StringValue estimation_uuid = 11;
+}
+
+message UserReserveRideResult {
+    repeated RideReservationDTO ride_reservation = 1;
+}

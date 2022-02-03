@@ -1,0 +1,34 @@
+{
+  "name": "@dragonball-shared/proto",
+  "version": "0.0.1",
+  "main": "./generated/index.ts",
+  "publishConfig": {
+    "access": "public",
+    "source": "./generated/index.ts",
+    "main": "./dist/index.js",
+    "module": "./dist/index.module.js",
+    "exports": "./dist/index.module.js",
+    "types": "./dist/index.d.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "yarn clean && yarn proto:gen && microbundle build --jsx jsx --jsxImportSource react --globals react/jsx-runtime=jsx --compress -f esm,cjs",
+    "dev": "yarn clean && yarn proto:gen && microbundle watch --jsx jsx --jsxImportSource react --globals react/jsx-runtime=jsx --compress -f esm",
+    "clean": "rm -rf ./generated ./dist",
+    "prepublishOnly": "yarn build",
+    "test": "yarn build",
+    "proto:gen": "./bin/compileProtocol.sh",
+    "proto:update": "rm -rf ./proto && ./bin/updateProtocol.sh"
+  },
+  "devDependencies": {
+    "microbundle": "^0.13.3",
+    "ts-proto": "github:VCNC/ts-proto#97d4064ea2ec0ed9c5becc044fac09563496d541",
+    "typescript": "^4.3.4"
+  },
+  "peerDependencies": {
+    "@babel/runtime": "*"
+  }
+}

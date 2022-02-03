@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverGetCurrentTipStatisticsEntryProto";
+
+// 설명:
+// [드라이버앱] 이번 달 서비스팁 수익을 조회할때 호출한다.
+// [핸들모아] 누적 서비스팁 수익을 조회할때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverGetCurrentTipStatisticsEntryParams {
+}
+
+message DriverGetCurrentTipStatisticsEntryResult {
+    message Entry {
+        // 월 단위: yyyy-MM 형식
+        // 누적: 빈 문자열
+        string period = 1;
+        int32 amountKRW = 2;
+    }
+
+    // null이 내려올 수 있다.
+    Entry entry = 1;
+}

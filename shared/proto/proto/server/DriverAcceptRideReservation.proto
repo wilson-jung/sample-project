@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "ride_reservation.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 드라이버가 예약호출을 수락할 때 타다 드라이버 앱에서 호출한다.
+// 만약 이미 수락한 예약호출이라면 그냥 성공한 것처럼 처리된다. (멱등성 원칙)
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 ride_reservation_id에 해당하는 예약호출이 존재하지 않을때
+
+message DriverAcceptRideReservationParams {
+    string ride_reservation_id = 1;
+}
+
+message DriverAcceptRideReservationResult {
+    RideReservationDTO ride_reservation = 1;
+}

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserUpdatePaymentMethodOfPaymentProfileProto";
+
+// 설명 :
+// PaymentProfile의 payment method를 변경하고 싶을 때 호출된다.
+//
+// 에러코드:
+// BAD_REQUEST:
+//   - 잘못된 paymentProfileId
+//   - 잘못된 PaymentProfile의 상태
+//   - 잘못된 paymentMethodId
+// 기타: 공통 에러코드
+
+message UserUpdatePaymentMethodOfPaymentProfileParams {
+    // payment method를 변경하고 싶은 PaymentProfile의 id.
+    string paymentProfileId = 1;
+    // 변경할 payment method의 id.
+    string paymentMethodId = 2;
+}
+
+message UserUpdatePaymentMethodOfPaymentProfileResult {
+    // 변경된 PaymentProfile을 내려준다.
+    PaymentProfileDTO paymentProfile = 1;
+}

@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserReviewRideProto";
+
+// 설명:
+// 라이더앱에서 라이드가 끝난 후 리뷰를 남길때 이용한다.
+//
+// 에러코드:
+// BAD_REQUEST: Ride가 없는 경우
+
+message UserReviewRideParams {
+    enum RideRatingTag {
+        // 부정 태그
+        // 기타 (직접입력)
+        CUSTOM = 0;
+        // 힘들었던 탑승
+        HARD_RIDE = 1 [(client_deprecated_enum_value) = true];
+        // 불친절한 드라이버
+        UNKIND = 2;
+        // 운전 실력
+        UNSKILLED_DRIVING = 3 [(client_deprecated_enum_value) = true];
+        // 급정거 및 급발진 (실시간 전용)
+        WILD_DRIVING = 4;
+        // 잘못된 길로 진입함
+        DETOUR = 5;
+        // 원치 않는 대화
+        TOO_MUCH_TALKER = 6;
+        // 담배 등 불쾌한 냄새
+        UNCLEAN = 7;
+        // 업무 외 휴대폰 사용
+        PRIVATE_PHONE_USAGE = 8 [(client_deprecated_enum_value) = true];
+        // 목적지 및 안전벨트 미확인
+        NO_GREETING = 9;
+        // 별점 및 서비스팁 요구
+        MONEY_DEMANDING = 10;
+        // 단정하지 않은 복장
+        BAD_CLOTHING = 11;
+        // 운행 중 휴대폰 사용
+        PHONE_USAGE = 12;
+        // 경로 우회
+        BYPASSING_ROUTE = 13;
+        // 타다 서비스에 걸맞지 않음 (대리에서 기본 태그)
+        LOW_QUALITY = 14;
+        // 과속 및 불안한 주행 (대리 전용)
+        DAERI_WILD_DRIVING = 15;
+        // 긴 탑승 대기시간
+        LONG_WAITING = 20;
+        // 출발지로 차가 오지 않음
+        NO_COMING_STARTING_POINT = 21;
+
+        // 긍정 태그
+        // 편안한 운행
+        COMFORTABLE_RIDE = 16;
+        // 친절한 드라이버
+        KIND = 17;
+        // 쾌적한 차량 내부
+        CLEAN = 18;
+        // 차분한 음악
+        RELAXED_MUSIC = 19;
+    }
+    // 하위호환성을 고려하여 nullable로 만든다.
+    message RideReviewVersionValue {
+        enum RideReviewVersion {
+            // 해당 시점에 실제로 메인으로 사용하는 리뷰
+            V20211230 = 0;
+            // 실험 환경에서 작성된 리뷰는 _EXPERIMENT 를 접미어로 둔다
+            // 동시에 여러 실험용 리뷰를 사용하면 V20211230_EXPERIMENT_A 이런식으로 알파벳을 추가하여 구분한다
+            // 2021.12.30: 칭찬태그 추가, 불만태그 추가
+            V20211230_EXPERIMENT = 1;
+        }
+
+        RideReviewVersion value = 1;
+    }
+    message Tip {
+        int32 amount = 1;
+        string payment_method_id = 2;
+        string payment_profile_id = 3;
+    }
+    string rideId = 1;
+    int32 rideRating = 2;
+    repeated RideRatingTag rideRatingTags = 3;
+    StringValue reason = 4;
+    Tip tip = 5;
+    BoolValue prevent_same_driver_matching = 6;
+    RideReviewVersionValue version = 7;
+}
+
+message UserReviewRideResult {
+    BoolValue shouldAskAppSatisfaction = 1;
+}

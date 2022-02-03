@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserLogEventProto";
+
+// 설명:
+// 타다 라이더앱에서 발생한 로그를 기록하는데 호출된다.
+// ../logging/UserClickViewPayload.proto 에 EventKey 별 payload 의 schema 가 적혀있다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserLogEventParams {
+    enum EventKey {
+        CLICK_VIEW = 0;
+        RIDE_AVAILABILITY_ISSUE = 1;
+    }
+
+    EventKey eventKey = 1;
+    string payload = 2;
+    int64 clientTimeMs = 3;
+}
+
+message UserLogEventResult {
+}

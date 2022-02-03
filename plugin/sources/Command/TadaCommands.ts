@@ -16,9 +16,6 @@ export abstract class TadaCommands extends Command<CommandContext> {
   async getDirectoryByScope(scope: string) {
     const workspaces = await this.workspaces()
 
-    console.log('workspaces', workspaces)
-    console.log('scope', scope)
-
     const workspacesByScope = workspaces.filter(workspace => workspace.manifest.name.scope === scope)
     const workspacesDirectories = workspacesByScope.map(workspace => workspace.relativeCwd.split('/')[0])
 

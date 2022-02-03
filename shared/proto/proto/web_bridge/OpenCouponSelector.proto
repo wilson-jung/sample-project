@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+import "server/UserListCoupons.proto";
+
+package taxi.web_bridge;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.web_bridge";
+option java_outer_classname = "TripSelectCoupon";
+
+
+message OpenCouponSelectorParams {
+  // 이미 선택 된 쿠폰의 id, null이면 선택 안한 상태
+  StringValue id = 1;
+  // 쿠폰 선택 뷰에서 선택 가능한 쿠폰을 보여줄 때 사용
+  taxi.server.UserListCouponsParams params = 2;
+}
+
+message OpenCouponSelectorResult {
+  // 선택된 쿠폰의 정보
+  StringValue couponId = 1;
+}

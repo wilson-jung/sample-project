@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserAuthenticateProto";
+
+// 설명:
+// 유저가 로그인할때 라이더앱에서 호출한다.
+//
+// 에러코드:
+// ACCOUNT_DOES_NOT_EXIST: 주어진 email로 가입한 유저가 존재하지 않는 경우
+// INVALID_PASSWORD: 비밀번호가 틀린 경우
+// INACTIVE_USER: 로그인 하려는 유저가 휴면 상태일 경우. 이 경우에 ErrorDTO.extra에 다음과 같은 payload가 내려간다 :
+//                  - activationToken: 유저 활성화를 위한 token
+//                  - maskedName: 모자이크 처리된 유저 이름
+//                  - maskedEmail: 모자이크 처리된 유저 이메일
+// UPGRADE_NEEDED: 로그인 하려는 유저가 휴면 상태이고, 클라이언트가 휴면 처리 로직이 없는 버전일 경우
+
+message UserAuthenticateParams {
+    string email = 1;
+    string password = 2;
+    TrackingIdentifiers trackingIdentifiers = 3;
+}
+
+message UserAuthenticateResult {
+    // 발급된 AccessToken은 응답의 X-GRYPHON-SET-ACCESS-TOKEN 헤더에 넣어줍니다.
+    // 클라이언트는 이 헤더를 조회하여 클라이언트 앱에 저장하여 사용해야합니다.
+    // 일단 로그인이 되면 다른 앱에서는 자동으로 로그인이 풀립니다.
+}

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverLogEventProto";
+
+// 설명:
+// 드라이버앱에서 발생한 로그를 기록하는데 호출된다.
+// ../logging/Driver(*).proto 에 EventKey 별 payload 의 schema 가 적혀있다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverLogEventParams {
+    enum EventKey {
+        CLICK_VIEW = 0;
+        OPEN_NAVIGATION = 1;
+    }
+
+    EventKey eventKey = 1;
+    string payload = 2;
+    int64 clientTimeMs = 3;
+}
+
+message DriverLogEventResult {
+}

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 드라이버가 포워드 디스패치를 off 상태로 바꾸면 호출된다
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)
+
+message DriverDisableForwardDispatchParams {
+}
+
+message DriverDisableForwardDispatchResult {
+    DriverStatusDTO driver_status = 1;
+}

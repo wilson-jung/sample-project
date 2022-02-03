@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverGetCurrentRideStatisticsEntryProto";
+
+// 설명:
+// 드라이버앱에서 오늘(혹은 이번 달) 운행 이력을 조회할때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverGetCurrentDriverActivityStatisticsEntryParams {
+    DriverActivityStatisticsEntryDTO.PeriodType period_type = 1;
+}
+
+message DriverGetCurrentDriverActivityStatisticsEntryResult {
+    DriverActivityStatisticsEntryDTO entry = 1;
+}

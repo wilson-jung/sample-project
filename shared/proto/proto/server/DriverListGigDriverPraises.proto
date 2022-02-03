@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "common.proto";
+import "mission.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverListGigDriverPraisesProto";
+
+// 설명:
+// 드라이버에게 주어진 미션 종류에 대한 감사 메시지들을 내려줄 때 드라이버앱에서 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListGigDriverPraisesParams {
+    DriverMissionDTO.MissionType mission_type = 1;
+    StringValue next_token = 2;
+}
+
+message DriverListGigDriverPraisesResult {
+    message DriverPraisesByPeriod {
+        // 연도와 월
+        int32 year = 1;
+        int32 month = 2;
+        // 해당 월의 전체 감사메시지 개수
+        int32 count = 3;
+        // 현재 page에 내려가는 칭찬 메시지
+        repeated DriverPraiseDTO praises = 4;
+    }
+    repeated DriverPraisesByPeriod praises_by_period = 1;
+    StringValue next_token = 2;
+}

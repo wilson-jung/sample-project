@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "common.proto";
+import "ride.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 드라이버가 포워드 디스패치 배차를 수락할 때 드라이버앱에서 호출한다.
+// 드라이버가 수동으로 수락하거나, 앱에서 타임아웃이 났을 때 호출된다.
+//
+// 에러코드:
+// BAD_REQUEST: ride_id에 해당하는 라이드가 존재하지 않을때
+// BAD_REQUEST: 라이드가 드라이버에게 배차된 상태가 아닌경우
+
+message DriverAcceptForwardRideParams {
+    string ride_id = 1;
+}
+
+message DriverAcceptForwardRideResult {
+    RideDTO ride = 1;
+    DriverStatusDTO driver_status = 2;
+}

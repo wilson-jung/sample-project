@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 타다 호출 예약하기 뷰에서 예약 가능한 상품 종류와 상품별 정보를 내려줄 때 사용한다.
+//
+// 에러 코드:
+// BAD_REQUEST - origin, destination이 null일 경우
+// 그 외 - 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserListRideReservationAvailableRideTypesParams {
+    AddressedLocation origin = 1;
+    AddressedLocation destination = 2;
+}
+
+message UserListRideReservationAvailableRideTypesResult {
+    message RideTypeInfo {
+        string ride_type = 2;
+        int32 min_cost = 5;
+    }
+
+    repeated RideTypeInfo ride_type_infos = 1;
+    int32 default_ride_type_info_index = 2; // 페이지에 처음 진입했을 때 기본으로 선택되어 있는 상품 지정하기 위한 값
+}

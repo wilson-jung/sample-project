@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "trip.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverLogTripReminder";
+
+// 설명:
+// 드라이버가 Trip 시작 팝업 노티를 확인하면 응답값으로 보낸다.
+// 만약 이미 시작한 Trip이 라면 그냥 성공한 것처럼 처리된다. (멱등성 원칙)
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 TripId에 해당하는 Trip이 존재하지 않을때
+
+message DriverLogTripReminderParams {
+    string tripId = 1;
+}
+
+message DriverLogTripReminderResult {
+    TripDTO trip = 1;
+}

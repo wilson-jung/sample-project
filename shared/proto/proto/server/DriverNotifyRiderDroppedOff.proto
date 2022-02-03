@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+import "ride.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverNotifyRiderDroppedOffProto";
+
+// 설명:
+// 드라이버가 도착지에서 라이더를 내려 줄 때 드라이버앱에서 호출한다.
+// 만약 이미 Ride가 DROPPED_OFF 상태라면 그냥 성공한 것처럼 처리된다. (멱등성 원칙)
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 RideId에 해당하는 라이드가 존재하지 않을때
+// BAD_REQUEST: 드라이버에게 할당된 Ride가 아닐때
+// BAD_REQUEST: PICKED_UP 상태가 아닐때
+
+message DriverNotifyRiderDroppedOffParams {
+    string rideId = 1;
+    // 드라이버가 입력한 톨게이트 비용
+    Int32Value tollgateFee = 2;
+    // 드라이버가 입력한 택시 사용료
+    Int32Value usage_fee = 3;
+}
+
+message DriverNotifyRiderDroppedOffResult {
+    RideDTO ride = 1;
+    RideDTO forward_ride = 3;
+
+    // 드라이버가 휴식없이 너무 오래 일했다고 판정해서
+    // 휴식이 필요하다는 메세지를 보여줄 때가 있었다.
+    //
+    // 그 메세지를 보여줘야 하는지 여부.
+    // basic 일 때 사용하던 기능이다. 이제 안 쓴다.
+    bool notifyCoolDown = 2;
+}

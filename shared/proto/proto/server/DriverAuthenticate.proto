@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverAuthenticateProto";
+
+// 설명:
+// 드라이버가 로그인할때 드라이버앱에서 호출한다.
+//
+// 에러코드:
+// ACCOUNT_DOES_NOT_EXIST: 주어진 ID로 가입한 유저가 존재하지 않는 경우
+// INVALID_PASSWORD: 비밀번호가 틀린 경우
+
+message DriverAuthenticateParams {
+    string id = 1;
+    string password = 2;
+
+    // 로그인 실수 방지용. 하위 호환을 위해 아예 없으면 검증하지 않고 로그인 시켜준다.
+    string phoneNumber = 3;
+}
+
+message DriverAuthenticateResult {
+    // 발급된 AccessToken은 응답의 X-GRYPHON-SET-ACCESS-TOKEN 헤더에 넣어줍니다.
+    // 클라이언트는 이 헤더를 조회하여 클라이언트 앱에 저장하여 사용해야합니다.
+    // 일단 로그인이 되면 다른 앱에서는 자동으로 로그인이 풀립니다.
+}

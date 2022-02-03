@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverQueryPaidRoadPassedProto";
+
+// 설명:
+// 드라이버가 도착지에서 라이더를 내려 줄 때 드라이버 앱에서 호출한다.
+// NotifyRideDroppedOff 를 호출하기 전에 넛지메세지를 보여주기 위해 호출할 예정이다
+//
+// 에러코드:
+//
+
+message DriverQueryPaidRoadPassedParams {
+    string rideId = 1;
+}
+
+message DriverQueryPaidRoadPassedResult {
+    bool passed = 1;
+}

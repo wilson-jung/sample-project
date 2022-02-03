@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetTadaNextPreRecruitmentStatusProto";
+
+// 설명 :
+// 사용자가 대형승압 사전 신청 상태를 확인할 때 호출한다
+//
+
+message UserGetTadaNextPreRecruitmentStatusParams {
+}
+
+// 응답 : 사전 신청 상태를 알려줌
+
+message UserGetTadaNextPreRecruitmentStatusResult {
+    EventRecruitmentDTO.Status status = 1;
+}

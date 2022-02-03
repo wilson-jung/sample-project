@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 핸들모아앱에서 대리 선호 도착지역 설정 시 리스트를 받아올 때 핸들모아 앱에서 호출된다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverListDaeriPreferredAreaGroupsParams {
+}
+
+message DriverListDaeriPreferredAreaGroupsResult {
+    message DaeriPreferredAreaGroup {
+        string si_do = 1;
+        repeated DaeriMissionPreferences.PreferredArea areas = 2;
+    }
+
+    repeated DaeriPreferredAreaGroup area_groups = 1;
+}

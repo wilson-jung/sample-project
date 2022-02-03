@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetSignUpStatusProto";
+
+// 설명:
+// 라이더앱에서 회원가입 시에 필요한 정보들을 조회하기 위해 호출한다.
+
+message UserGetSignUpStatusParams {
+}
+
+message UserGetSignUpStatusResult {
+    // 쿠폰 툴팁 텍스트
+    // 변수명과는 다르게 가입 시 지급되는 쿠폰과 관련없는 문구가 내려갈 수도 있다.
+    // ex) "서울, 부산, 성남 어디든"
+    StringValue coupon_tooltip_text = 1;
+}

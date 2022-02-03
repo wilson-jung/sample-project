@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+import "common.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserGetPickupPointProto";
+
+// 설명:
+// 유저가 출발지 조정을 위해 픽업 포인트를 찾을 때 라이더앱에서 호출된다.
+
+message UserGetPickupPointParams {
+    AddressedLocation origin = 1;
+    AddressedLocation destination = 2;
+    repeated AddressedLocation waypoints = 3;
+
+    // 라이드 타입에 따라 픽업포인트 조정이 달라지는 경우가 있어 타입을 같이 올려준다.
+    // 안 올려줄 경우 프리미엄에 대한 픽업포인트를 내려준다.
+    // RideType 혹은 RideTypeGroup 값이 올 수 있다.
+    StringValue ride_type = 4;
+}
+
+message UserGetPickupPointResult {
+    message ConfirmPopup {
+        string title = 1;
+        string message = 2;
+    }
+
+    message NotRideSoonNudge {
+        string title = 1;
+        string message = 2;
+    }
+
+    // 이 값이 false인 경우에는 하단 버튼을 비활성화 시켜야한다.
+    bool isAvailable = 1;
+    // 픽업포인트의 위치. isAvailable이 false인 경우에도 backward compat을 위해 내려간다.
+    AddressedLocation pickupPoint = 2;
+    // 하단 메시지 뷰의 메시지 문구
+    StringValue message = 3;
+    // 하단 메시지 뷰의 디테일 메시지 문구
+    StringValue detailMessage = 4;
+    // 클라이언트에서는 이 필드를 보고 호출 버튼을 누른 경우 팝업을 띄워줘야 한다.
+    ConfirmPopup confirmPopup = 6;
+    // 클라이언트에서는 UserRequestRide할 때 이 토큰을 올려주어야 한다.
+    StringValue pickup_point_token = 7;
+    // 5분 내에는 안탈게요 넛지의 메세지 문구
+    NotRideSoonNudge not_ride_soon_nudge = 8;
+}

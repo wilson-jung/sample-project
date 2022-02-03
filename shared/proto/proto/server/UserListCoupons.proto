@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+import "common.proto";
+import "coupon.proto";
+import "wrappers.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "UserListCouponsProto";
+
+// 설명:
+// 사용자가 사용할 수 있는 쿠폰을 확인할 때 라이더 앱에서 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message UserListCouponsParams {
+    // 아래 값들은 쿠폰 사용 가능 조건을 판단하기 위해 넣어준다. 아는 것만 넣어주면 된다.
+
+    // rideType 이 존재할 경우 실시간 호출에 사용할 수 있는 쿠폰만 활성화됩니다.
+    StringValue rideType = 1;
+
+    // Trip 서버에서 필요한 parameters
+    // 클라이언트는 웹뷰에서 받은대로 서버로 넘기면 된다.
+    // 존재하는 경우 예약 호출에 사용할 수 있는 쿠폰만 활성화됩니다.
+    StringValue tripParameters = 2;
+
+    AddressedLocation origin = 3;
+    AddressedLocation destination = 4;
+
+    // 햄버거 뷰에서는 설정되지 않는다.
+    StringValue paymentMethodId = 5;
+    StringValue paymentProfileId = 6;
+
+    // 한번에 내려줄 쿠폰의 수. limit이 있을 때만 페이지로 쪼개서 내려간다.
+    Int32Value limit = 100;
+
+    StringValue next_token = 101;
+
+    // true 일 경우 새 쿠폰을 표시하는 붉은 뱃지가 없어지지 않습니다.
+    bool glimpse = 102;
+}
+
+// 응답:
+// CouponDTO의 리스트가 내려간다.
+
+message UserListCouponsResult {
+    repeated CouponDTO coupons = 1;
+
+    // 다음 페이지가 있을 때 내려간다.
+    StringValue next_token = 2;
+
+    message PassportMembershipNudgeCoupon {
+        // 넛지 문구 제목 ex) 패스포트 멤버십 전용 쿠폰
+        string title = 1;
+        // 넛지 문구 내용 ex) 지금 패스포트 가입하면 7만원 쿠폰 혜택을 바로 드려요!
+        string description = 2;
+        // 버튼 문구 ex) 혜택 보기
+        string button_text = 3;
+        // 혜택 쿠폰 태그 문구 ex) 패스포트
+        repeated string tag_texts = 4;
+
+        // 멤버십 넛지 쿠폰의 위치를 나타냅니다.
+        // 순서는 0부터 시작합니다.
+        // ex) index == 0 --> 첫 번째
+        //     index == 2 --> 세 번째
+        int32 index = 5;
+        string url = 6;
+        string log_key = 7;
+    }
+
+    message SocarPassportMembershipNudge {
+        // 넛지 문구 내용 ex) 패스포트 멤버십 혜택\n[b]쏘카 50% 쿠폰 사용하기[/b]
+        string description = 1;
+        string url = 2;
+        string log_key = 3;
+    }
+
+    // 패스포트 넛지 쿠폰
+    // 패스포트 넛지 쿠폰이 내려오면 쿠폰뷰에서 패스포트 넛지 쿠폰을 처리 해주어야 합니다.
+    PassportMembershipNudgeCoupon passport_membership_nudge_coupon = 3;
+
+    // 쏘카 패스포트 넛지
+    // 쏘카 패스포트 넛지가 내려오면 쿠폰함에서 쏘카 패스포트 넛지 처리를 해주어야 합니다.
+    SocarPassportMembershipNudge socar_passport_membership_nudge = 4;
+}

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+
+// 설명:
+// 드라이버의 설정을 조회할 때 호출한다.
+//
+// 에러코드:
+// 공통 에러 코드(AUTHORIZATION_REQUIRED, INVALID_ACCESS_TOKEN 등)만 내려간다.
+
+message DriverGetPreferencesParams {
+}
+
+// 응답 :
+// 드라이버의 설정 상태를 DTO로 응답해준다.
+
+message DriverGetPreferencesResult {
+    DriverPreferencesDTO preferences = 1;
+}

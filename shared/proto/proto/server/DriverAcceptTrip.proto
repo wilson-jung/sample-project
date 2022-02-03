@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "trip.proto";
+
+package taxi.server;
+
+option java_multiple_files = true;
+option java_package = "kr.co.vcnc.gryphon.protocol.server";
+option java_outer_classname = "DriverAcceptTripProto";
+
+// 설명:
+// 드라이버가 Trip 시작 수락할때 드라이버앱에서 호출한다.
+// 만약 이미 시작한 Trip이 라면 그냥 성공한 것처럼 처리된다. (멱등성 원칙)
+//
+// 에러코드:
+// BAD_REQUEST: 요청의 TripId에 해당하는 Trip이 존재하지 않을때
+
+message DriverAcceptTripParams {
+    string tripId = 1;
+}
+
+message DriverAcceptTripResult {
+    TripDTO trip = 1;
+}
