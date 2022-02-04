@@ -1,1 +1,1 @@
-{"version":3,"file":"index.js","sources":["../src/sample/index.ts"],"sourcesContent":["export const sample = () => {}\n"],"names":[],"mappings":"eAAsB"}
+{"version":3,"file":"index.js","sources":["../src/index.ts"],"sourcesContent":["export const sample = () => {}\n"],"names":[],"mappings":"eAAsB"}

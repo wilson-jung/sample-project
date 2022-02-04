@@ -1,1 +1,1 @@
-export * from './sample';
+export declare const sample: () => void;

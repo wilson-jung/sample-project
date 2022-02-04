@@ -28,7 +28,6 @@
     "@emotion/styled": "^11.3.0"
   },
   "devDependencies": {
-    "@dragonball-shared/proto": "workspace:shared/proto",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
     "@types/lodash": "^4",
