@@ -26,7 +26,7 @@ sudo chown -R $USER /usr/local/include/google
 ```bash
 yarn bootstrap # proto 파일이 바뀔때마다 bootstrap 한번은 해줘야 변경사항이 반영된다.
 # 혹은 'yarn proto:gen'으로 proto파일 변경 사항 반영 가능
-yarn dev <-p,--project> {{projectName}} # ex) rider-passport / rider-trip / driver-feedback
+yarn dev <-p,--project> {{projectName}} # ex) dragonball-app
 
 yarn workspaces new # 프로젝트 새로 생성
 ```
