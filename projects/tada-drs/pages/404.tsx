@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 import { pageConfig } from '@lib/router/config'
+import { useEffectOnce } from 'react-use'
 
 export default function Custom404() {
   const router = useRouter()
 
-  useEffect(() => {
+  useEffectOnce(() => {
     router.replace(pageConfig.main.props.build())
   })
 

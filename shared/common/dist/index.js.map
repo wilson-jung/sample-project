@@ -1,1 +1,0 @@
-{"version":3,"file":"index.js","sources":["../src/ProjectConfig.ts"],"sourcesContent":["export interface IPageConfig {\n  build: (...args: Array<string>) => string\n  pattern: string\n  title?: string\n}\n\nexport class PageConfigItem {\n  constructor(public props: IPageConfig) {}\n}\n"],"names":["props","this"],"mappings":"uBAOE,SAAmBA,QAAAA,aAAAC,WAAAD"}

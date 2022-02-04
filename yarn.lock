@@ -1447,17 +1447,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dragonball-shared/common@workspace:shared/common":
-  version: 0.0.0-use.local
-  resolution: "@dragonball-shared/common@workspace:shared/common"
-  dependencies:
-    microbundle: ^0.13.3
-    typescript: ^4.3.4
-  peerDependencies:
-    "@babel/runtime": "*"
-  languageName: unknown
-  linkType: soft
-
 "@dragonball-shared/proto@workspace:shared/proto":
   version: 0.0.0-use.local
   resolution: "@dragonball-shared/proto@workspace:shared/proto"
@@ -1470,30 +1459,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@dragonball-shared/ui-common@workspace:shared/ui-common":
+"@dragonball/tada-drs@workspace:projects/tada-drs":
   version: 0.0.0-use.local
-  resolution: "@dragonball-shared/ui-common@workspace:shared/ui-common"
-  dependencies:
-    "@emotion/react": ^11.4.0
-    "@emotion/styled": ^11.3.0
-    "@types/lodash": ^4
-    "@types/react": ^17.0.2
-    "@types/react-dom": ^17.0.2
-    "@types/react-lottie": ^1.2.6
-    microbundle: ^0.13.3
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    typescript: ^4.3.4
-  peerDependencies:
-    "@babel/runtime": "*"
-    "@emotion/react": ^11.4.0
-    "@emotion/styled": ^11.3.0
-  languageName: unknown
-  linkType: soft
-
-"@dragonball/sample-app@workspace:projects/sample-app":
-  version: 0.0.0-use.local
-  resolution: "@dragonball/sample-app@workspace:projects/sample-app"
+  resolution: "@dragonball/tada-drs@workspace:projects/tada-drs"
   dependencies:
     "@babel/core": ^7.12.3
     "@babel/runtime": ^7.14.8
@@ -2812,7 +2780,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4, @types/lodash@npm:^4.14.165, @types/lodash@npm:^4.14.175":
+"@types/lodash@npm:^4.14.165, @types/lodash@npm:^4.14.175":
   version: 4.14.178
   resolution: "@types/lodash@npm:4.14.178"
   checksum: a69a04a60bfc5257c3130a554b4efa0c383f0141b7b3db8ab7cf07ad2a46ea085fce66d0242da41da7e5647b133d5dfb2c15add9cbed8d7fef955e4a1e5b3128
@@ -2888,15 +2856,6 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: 4d5730dffbef86c887cecad7e3cecda424ce6a64d0b5441c63b5b015d48219868660a2bb1aa15e897e565ad8867fa6b885d4358b04e1c4e589ba4c07c3fda55c
-  languageName: node
-  linkType: hard
-
-"@types/react-lottie@npm:^1.2.6":
-  version: 1.2.6
-  resolution: "@types/react-lottie@npm:1.2.6"
-  dependencies:
-    "@types/react": "*"
-  checksum: 7930bad2cc998d62c3be4a0c66edfcbf1d87af6ffca5befa860acec706fd62e6e1e964ecffe88c3ed5a42668606e9ff1f43cc1beff764c679f68aa05166ce746
   languageName: node
   linkType: hard
 
@@ -10769,7 +10728,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^17.0.2, react-dom@npm:latest":
+"react-dom@npm:latest":
   version: 17.0.2
   resolution: "react-dom@npm:17.0.2"
   dependencies:

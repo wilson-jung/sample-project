@@ -1,5 +1,5 @@
 import '@lib/polyfill'
-import { wrapper } from '@features/__store__/store'
+import { wrapper } from '../store/store'
 
 function MyApp({ Component, pageProps }: any) {
   return <AppShell Component={Component} pageProps={pageProps} />

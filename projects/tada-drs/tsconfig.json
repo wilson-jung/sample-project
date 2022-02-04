@@ -2,10 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@lib/*": ["projects/sample-app/lib/*"],
-      "@features/*": ["projects/sample-app/features/*"],
-      "@locale/*": ["projects/sample-app/locale/*"],
-      "@pages/*": ["projects/rider-nps/pages/*"]
+      "@lib/*": ["projects/tada-drs/lib/*"],
+      "@features/*": ["projects/tada-drs/features/*"],
+      "@pages/*": ["projects/tada-drs/pages/*"]
     },
     "jsx": "preserve",
     "noEmit": true,
