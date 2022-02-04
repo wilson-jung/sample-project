@@ -1,5 +1,5 @@
 {
-  "name": "dragonball",
+  "name": "dragonball-web",
   "private": true,
   "scripts": {
     "bootstrap": "yarn install && yarn proto:gen",
