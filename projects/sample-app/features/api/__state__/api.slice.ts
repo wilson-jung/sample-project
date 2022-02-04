@@ -1,6 +1,12 @@
 import Cookies from 'js-cookie'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { UserAuthenticateParams, UserAuthenticateResult, ErrorDTO } from '@dragonball-shared/proto'
+import {
+  UserAuthenticateParams,
+  UserAuthenticateResult,
+  ErrorDTO,
+  UserGetUserStatusResult,
+  UserGetUserStatusParams,
+} from '@dragonball-shared/proto'
 import { getRuntimeConfig } from '@lib/utils/runtimeConfig'
 import { ACCESS_TOKEN_KEY, GRYPHONE_ACCESS_TOKEN_KEY } from '@features/api/contants'
 
@@ -52,8 +58,14 @@ export const apiSlice = createApi({
           return data
         },
       }),
+      getUserStatus: builder.query<UserGetUserStatusResult, UserGetUserStatusParams>({
+        query: body => ({
+          body,
+          method: METHOD_TYPE,
+          url: `/u/GetUserStatus`,
+        }),
+        keepUnusedDataFor: 60,
+      }),
     }
   },
 })
-
-export const { useAuthenticateMutation } = apiSlice

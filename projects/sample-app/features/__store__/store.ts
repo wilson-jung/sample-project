@@ -3,7 +3,7 @@ import { Store } from 'redux'
 import { createWrapper } from 'next-redux-wrapper'
 import { GetServerSidePropsContext, GetStaticPropsContext, NextPageContext } from 'next'
 import { AppContext } from 'next/app'
-import rootReducer, { CombinedReducerState } from '@features/store/root.reducer'
+import rootReducer, { CombinedReducerState } from './root.reducer'
 import { apiSlice } from '@features/api/__state__/api.slice'
 import isString from 'lodash/isString'
 

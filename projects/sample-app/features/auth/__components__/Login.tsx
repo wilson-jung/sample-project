@@ -1,11 +1,11 @@
 import React, { ChangeEvent, useCallback, useRef, useState, VoidFunctionComponent } from 'react'
-import { useAuthenticateMutation } from '@features/api/__state__/api.slice'
+import { apiSlice } from '@features/api/__state__/api.slice'
 import styled from '@emotion/styled'
 import { useEffectOnce } from 'react-use'
 import { useRouter } from 'next/router'
 
 export const Login: VoidFunctionComponent = () => {
-  const [authenticate] = useAuthenticateMutation()
+  const [authenticate] = apiSlice.useAuthenticateMutation()
   const [state, setState] = useState({
     email: 'haley@vcnc.co.kr',
     password: '1231231',

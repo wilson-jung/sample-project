@@ -1,5 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { RootState } from '@features/store/store'
+import { RootState } from '@features/__store__/store'
 
 interface IState {
   count: number
