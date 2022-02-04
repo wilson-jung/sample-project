@@ -4,9 +4,7 @@ import { UserAuthenticateParams, UserAuthenticateResult, ErrorDTO } from '@drago
 import { getRuntimeConfig } from '@lib/utils/runtimeConfig'
 import { ACCESS_TOKEN_KEY, GRYPHONE_ACCESS_TOKEN_KEY } from '@features/api/contants'
 
-const host = getRuntimeConfig().HOST
-const useProxy = getRuntimeConfig().USE_PROXY
-const baseUrl = useProxy === 'true' && typeof window !== 'undefined' ? `/api/dev/proxy?url=${host}` : `${host}`
+const baseUrl = getRuntimeConfig().HOST
 
 const METHOD_TYPE = 'POST'
 

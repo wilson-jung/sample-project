@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@lib/*": ["projects/sample-app/lib/*"],
+      "@features/*": ["projects/sample-app/features/*"],
+      "@locale/*": ["projects/sample-app/locale/*"],
+      "@pages/*": ["projects/rider-nps/pages/*"]
+    },
+    "jsx": "preserve",
+    "noEmit": true,
+    "allowJs": true
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+}
