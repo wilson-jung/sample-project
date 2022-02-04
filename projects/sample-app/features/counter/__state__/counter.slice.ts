@@ -1,17 +1,17 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '@features/store/store'
 
-interface CounterState {
+interface IState {
   count: number
 }
 
-const initialState = (): CounterState => {
+const initialState = (): IState => {
   return {
     count: 0,
   }
 }
 
-const counterSlice = createSlice({
+const slice = createSlice({
   initialState: initialState(),
   name: 'counter',
   reducers: {
@@ -21,13 +21,13 @@ const counterSlice = createSlice({
   },
 })
 
-const counterState = (state: RootState): CounterState => state.counter
+const state = (state: RootState): IState => state.counter
 
 // action creator
-export const counterActions = counterSlice.actions
+export const counterActions = slice.actions
 
 // selector
-export const selectCounter = createSelector(counterState, state => state.count)
+export const selectCounter = createSelector(state, state => state.count)
 
 // root reducer
-export const counterReducer = counterSlice.reducer
+export const counterReducer = slice.reducer
