@@ -1465,6 +1465,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.12.3
     "@babel/runtime": ^7.14.8
+    "@dragonball-shared/proto": "workspace:shared/proto"
     "@emotion/babel-plugin": ^11.3.0
     "@emotion/react": ^11.4.0
     "@emotion/styled": ^11.3.0
@@ -1508,7 +1509,7 @@ __metadata:
     jest: ^27.0.6
     jest-canvas-mock: ^2.3.1
     jest-fetch-mock: ^3.0.3
-    js-cookie: ^3
+    js-cookie: ^3.0.1
     lodash: ^4.17.20
     next: 12
     next-redux-wrapper: ^7.0.5
@@ -5806,29 +5807,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dragonball-web@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "dragonball-web@workspace:."
-  dependencies:
-    "@typescript-eslint/eslint-plugin": ^4.8.1
-    "@typescript-eslint/parser": ^4.8.1
-    "@yarnpkg/builder": ^3.0.1
-    eslint: ^7.13.0
-    eslint-config-airbnb: ^18.2.1
-    eslint-config-prettier: ^6.15.0
-    eslint-import-resolver-node: ^0.3.4
-    eslint-plugin-import: ^2.22.1
-    eslint-plugin-jsx-a11y: ^6.4.1
-    eslint-plugin-prettier: ^3.1.4
-    eslint-plugin-react: ^7.21.5
-    eslint-plugin-react-hooks: ^4
-    husky: ^7.0.0
-    lint-staged: ^10.5.4
-    prettier: ^2.1.2
-    typescript: ^4.3.4
-  languageName: unknown
-  linkType: soft
-
 "duplexer@npm:0.1.1":
   version: 0.1.1
   resolution: "duplexer@npm:0.1.1"
@@ -8420,7 +8398,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-cookie@npm:^3":
+"js-cookie@npm:^3.0.1":
   version: 3.0.1
   resolution: "js-cookie@npm:3.0.1"
   checksum: bb48de67e2a6bd1ae3dfd6b2d5a167c33dd0c5a37e909206161eb0358c98f17cb55acd55827a58e9eea3630d89444e7479f7938ef4420dda443218b8c434a4c3
@@ -12060,6 +12038,29 @@ resolve@^2.0.0-next.3:
   checksum: 5b07fe462ee03d2e1fac02cbb578efd2e0b55ac07e3d3db2e950aa9570ade5a4a2b8d3c15e9f25c89e4e50b646bc4269934601ee1eef4ca7968ad31960977690
   languageName: node
   linkType: hard
+
+"tada-backoffice-web@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "tada-backoffice-web@workspace:."
+  dependencies:
+    "@typescript-eslint/eslint-plugin": ^4.8.1
+    "@typescript-eslint/parser": ^4.8.1
+    "@yarnpkg/builder": ^3.0.1
+    eslint: ^7.13.0
+    eslint-config-airbnb: ^18.2.1
+    eslint-config-prettier: ^6.15.0
+    eslint-import-resolver-node: ^0.3.4
+    eslint-plugin-import: ^2.22.1
+    eslint-plugin-jsx-a11y: ^6.4.1
+    eslint-plugin-prettier: ^3.1.4
+    eslint-plugin-react: ^7.21.5
+    eslint-plugin-react-hooks: ^4
+    husky: ^7.0.0
+    lint-staged: ^10.5.4
+    prettier: ^2.1.2
+    typescript: ^4.3.4
+  languageName: unknown
+  linkType: soft
 
 "tapable@npm:^1.0.0":
   version: 1.1.3
